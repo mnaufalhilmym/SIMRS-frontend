@@ -47,7 +47,7 @@ export default function DashboardWrapper() {
   return (
     <>
       <div class="fixed z-10 top-0 left-0 w-60 h-full flex flex-col bg-light_sea_green">
-        <div class="w-fit mt-8 mx-auto">
+        <div class="w-fit max-w-full mt-8 px-4 mx-auto">
           <div
             class="w-32 h-32 mx-auto flex items-center justify-center text-white text-7xl rounded-full overflow-hidden"
             style={{
@@ -64,9 +64,14 @@ export default function DashboardWrapper() {
             </Show>
           </div>
           <div class="mt-2">
-            <span class="block text-white text-center">
-              {AccountAuth.data().name}
-            </span>
+            <Show
+              when={AccountAuth.data().name}
+              fallback={<LoadingSkeleton width="100%" height="1.5rem" />}
+            >
+              <span class="block text-white text-center truncate">
+                {AccountAuth.data().name}
+              </span>
+            </Show>
           </div>
         </div>
         <div class="py-4">

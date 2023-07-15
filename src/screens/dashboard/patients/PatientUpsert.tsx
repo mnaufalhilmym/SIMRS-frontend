@@ -26,6 +26,7 @@ import IconArrow from "../../../components/icon/Arrow";
 import DistrictI from "../../../types/district";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
 import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
+import Loading from "../../../components/loading/Loading";
 
 export default function PatientUpsertScreen() {
   let formRef: HTMLFormElement | undefined;
@@ -326,223 +327,233 @@ export default function PatientUpsertScreen() {
           </Switch>
         </h1>
       </div>
-      <div class="mt-2 px-6">
-        <form
-          ref={formRef}
-          class="flex flex-col xl:flex-row gap-x-4 space-y-4 xl:space-y-0"
-        >
-          <div class="w-full max-w-[40rem] space-y-4">
-            <InputTextItem
-              title="Nomor Rekam Medis (No. RM)"
-              name="medical_record_number"
-              value={patient()?.medicalRecordNumber}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, medicalRecordNumber: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Nomor Kartu Keluarga (No. KK)"
-              name="family_card_number"
-              value={patient()?.familyCardNumber}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, familyCardNumber: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputDropdownItem
-              title="Status Hubungan Dalam Keluarga"
-              name="relationship_in_family"
-              value={{
-                title: formatRelationshipInFamily(
-                  patient().relationshipInFamily
-                ),
-                value: patient().relationshipInFamily,
-              }}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({
-                  ...prev,
-                  relationshipInFamily: text as RelationshipInFamilyE,
-                }))
-              }
-              options={Object.values(RelationshipInFamilyE).map((r) => ({
-                title: formatRelationshipInFamily(r),
-                value: r,
-              }))}
-            />
-            <InputTextItem
-              title="Nomor Induk Kependudukan (No. NIK)"
-              name="population_identification_number"
-              value={patient()?.populationIdentificationNumber}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({
-                  ...prev,
-                  populationIdentificationNumber: text,
-                }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Nama Lengkap Pasien"
-              name="name"
-              value={patient()?.name}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, name: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputDropdownItem
-              title="Jenis Kelamin"
-              name="gender"
-              value={{
-                title: formatPatientGender(patient()!.gender),
-                value: patient().gender,
-              }}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({
-                  ...prev,
-                  gender: text as PatientGenderE,
-                }))
-              }
-              options={[
-                {
-                  title: formatPatientGender(PatientGenderE.Male),
-                  value: PatientGenderE.Male,
-                },
-                {
-                  title: formatPatientGender(PatientGenderE.Female),
-                  value: PatientGenderE.Female,
-                },
-              ]}
-              isRequired={mode() === "create"}
-            />
-            <div class="w-full max-w-[40rem] flex gap-x-2">
+      <Show when={mode() === "create" || (mode() === "edit" && !isLoading())}>
+        <div class="mt-2 px-6">
+          <form
+            ref={formRef}
+            class="flex flex-col xl:flex-row gap-x-4 space-y-4 xl:space-y-0"
+          >
+            <div class="w-full max-w-[40rem] space-y-4">
               <InputTextItem
-                title="Tempat Lahir"
-                name="place_of_birth"
-                value={patient()?.placeOfBirth}
+                title="Nomor Rekam Medis (No. RM)"
+                name="medical_record_number"
+                value={patient()?.medicalRecordNumber}
                 onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, placeOfBirth: text }))
+                  setPatient((prev) => ({ ...prev, medicalRecordNumber: text }))
                 }
-                outerClass="flex-1"
-                inputClass="mt-1 w-full"
+                inputClass="mt-1 w-full max-w-[40rem]"
                 isRequired={mode() === "create"}
               />
-              <InputDateItem
-                title="Tanggal Lahir"
-                name="date_of_birth"
-                value={patient()?.dateOfBirth}
+              <InputTextItem
+                title="Nomor Kartu Keluarga (No. KK)"
+                name="family_card_number"
+                value={patient()?.familyCardNumber}
                 onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, dateOfBirth: text }))
+                  setPatient((prev) => ({ ...prev, familyCardNumber: text }))
                 }
-                outerClass="flex-1"
-                inputClass="mt-1 w-full"
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputDropdownItem
+                title="Status Hubungan Dalam Keluarga"
+                name="relationship_in_family"
+                value={{
+                  title: formatRelationshipInFamily(
+                    patient().relationshipInFamily
+                  ),
+                  value: patient().relationshipInFamily,
+                }}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({
+                    ...prev,
+                    relationshipInFamily: text as RelationshipInFamilyE,
+                  }))
+                }
+                options={Object.values(RelationshipInFamilyE).map((r) => ({
+                  title: formatRelationshipInFamily(r),
+                  value: r,
+                }))}
+              />
+              <InputTextItem
+                title="Nomor Induk Kependudukan (No. NIK)"
+                name="population_identification_number"
+                value={patient()?.populationIdentificationNumber}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({
+                    ...prev,
+                    populationIdentificationNumber: text,
+                  }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Nama Lengkap Pasien"
+                name="name"
+                value={patient()?.name}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, name: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputDropdownItem
+                title="Jenis Kelamin"
+                name="gender"
+                value={{
+                  title: formatPatientGender(patient()!.gender),
+                  value: patient().gender,
+                }}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({
+                    ...prev,
+                    gender: text as PatientGenderE,
+                  }))
+                }
+                options={[
+                  {
+                    title: formatPatientGender(PatientGenderE.Male),
+                    value: PatientGenderE.Male,
+                  },
+                  {
+                    title: formatPatientGender(PatientGenderE.Female),
+                    value: PatientGenderE.Female,
+                  },
+                ]}
+                isRequired={mode() === "create"}
+              />
+              <div class="w-full max-w-[40rem] flex gap-x-2">
+                <InputTextItem
+                  title="Tempat Lahir"
+                  name="place_of_birth"
+                  value={patient()?.placeOfBirth}
+                  onChangeValue={(text) =>
+                    setPatient((prev) => ({ ...prev, placeOfBirth: text }))
+                  }
+                  outerClass="flex-1"
+                  inputClass="mt-1 w-full"
+                  isRequired={mode() === "create"}
+                />
+                <InputDateItem
+                  title="Tanggal Lahir"
+                  name="date_of_birth"
+                  value={patient()?.dateOfBirth}
+                  onChangeValue={(text) =>
+                    setPatient((prev) => ({ ...prev, dateOfBirth: text }))
+                  }
+                  outerClass="flex-1"
+                  inputClass="mt-1 w-full"
+                  isRequired={mode() === "create"}
+                />
+              </div>
+              <InputTextItem
+                title="Alamat"
+                name="address"
+                value={patient()?.address}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, address: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
                 isRequired={mode() === "create"}
               />
             </div>
-            <InputTextItem
-              title="Alamat"
-              name="address"
-              value={patient()?.address}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, address: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-          </div>
-          <div class="w-full max-w-[40rem] space-y-4">
-            <InputDropdownItem
-              title="Wilayah"
-              name="district_id"
-              value={{
-                title:
-                  districts().find((d) => d.id === patient().districtId)
-                    ?.name ?? "-",
-                value: patient().districtId ?? "-",
-              }}
-              onChangeValue={(val) =>
-                setPatient((prev) => ({ ...prev, districtId: val }))
-              }
-              options={districts().map((d) => ({ title: d.name, value: d.id }))}
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Pekerjaan"
-              name="job"
-              value={patient()?.job}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, job: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Agama"
-              name="religion"
-              value={patient()?.religion}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, religion: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Golongan Darah"
-              name="blood_group"
-              value={patient()?.bloodGroup}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, bloodGroup: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Asuransi"
-              name="insurence"
-              value={patient()?.insurence}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, insurence: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Nomor Asuransi"
-              name="insurence_number"
-              value={patient()?.insurenceNumber}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, insurenceNumber: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-            <InputTextItem
-              title="Nomor Telepon"
-              name="phone"
-              value={patient()?.phone}
-              onChangeValue={(text) =>
-                setPatient((prev) => ({ ...prev, phone: text }))
-              }
-              inputClass="mt-1 w-full max-w-[40rem]"
-              isRequired={mode() === "create"}
-            />
-          </div>
-        </form>
-      </div>
-      <div class="mt-6 mx-6">
-        <button
-          type="button"
-          onclick={onSave}
-          class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
-        >
-          Simpan
-        </button>
-      </div>
+            <div class="w-full max-w-[40rem] space-y-4">
+              <InputDropdownItem
+                title="Wilayah"
+                name="district_id"
+                value={{
+                  title:
+                    districts().find((d) => d.id === patient().districtId)
+                      ?.name ?? "-",
+                  value: patient().districtId ?? "-",
+                }}
+                onChangeValue={(val) =>
+                  setPatient((prev) => ({ ...prev, districtId: val }))
+                }
+                options={districts().map((d) => ({
+                  title: d.name,
+                  value: d.id,
+                }))}
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Pekerjaan"
+                name="job"
+                value={patient()?.job}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, job: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Agama"
+                name="religion"
+                value={patient()?.religion}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, religion: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Golongan Darah"
+                name="blood_group"
+                value={patient()?.bloodGroup}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, bloodGroup: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Asuransi"
+                name="insurence"
+                value={patient()?.insurence}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, insurence: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Nomor Asuransi"
+                name="insurence_number"
+                value={patient()?.insurenceNumber}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, insurenceNumber: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Nomor Telepon"
+                name="phone"
+                value={patient()?.phone}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, phone: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+            </div>
+          </form>
+        </div>
+        <div class="mt-6 mx-6">
+          <button
+            type="button"
+            onclick={onSave}
+            class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
+          >
+            Simpan
+          </button>
+        </div>
+      </Show>
+      <Show when={isLoading()}>
+        <div class="mt-6 px-6">
+          <Loading />
+        </div>
+      </Show>
     </>
   );
 }

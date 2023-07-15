@@ -19,6 +19,7 @@ import reqDeletePatientExamination from "../../../api/patientExamination/reqDele
 import NoData from "../../../components/nodata/NoData";
 import reqGetPatientList from "../../../api/patient/reqGetPatientList";
 import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
+import Loading from "../../../components/loading/Loading";
 
 export default function PatientDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -179,6 +180,9 @@ export default function PatientDetailScreen() {
             </div>
           </div>
         </Show>
+        <Show when={isLoading()}>
+          <Loading />
+        </Show>
       </div>
       <div class="mt-8 px-6 py-4">
         <h2 class="font-medium text-2xl">Anggota Keluarga</h2>
@@ -229,6 +233,9 @@ export default function PatientDetailScreen() {
               </For>
             </tbody>
           </table>
+        </Show>
+        <Show when={isLoading()}>
+          <Loading />
         </Show>
       </div>
       <div class="mt-8 px-6 py-4">
@@ -304,10 +311,11 @@ export default function PatientDetailScreen() {
             </tbody>
           </table>
         </Show>
+        <Show when={isLoading()}>
+          <Loading />
+        </Show>
         <Show when={!isLoading() && !patientExaminations().length}>
-          <div class="flex-1 flex items-center">
-            <NoData />
-          </div>
+          <NoData />
         </Show>
       </div>
     </>

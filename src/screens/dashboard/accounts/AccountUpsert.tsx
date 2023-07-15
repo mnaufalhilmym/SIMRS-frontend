@@ -18,6 +18,7 @@ import IconArrow from "../../../components/icon/Arrow";
 import InputText from "../../../components/form/InputText";
 import InputDropdown from "../../../components/form/InputDropdown";
 import formatAccountRole from "../../../utils/formatAccountRole";
+import Loading from "../../../components/loading/Loading";
 
 export default function AccountUpsertScreen() {
   let formRef: HTMLFormElement | undefined;
@@ -153,85 +154,92 @@ export default function AccountUpsertScreen() {
           </Switch>
         </h1>
       </div>
-      <div class="mt-2 px-6">
-        <form ref={formRef} class="space-y-4">
-          <InputTextItem
-            title="Nama Lengkap"
-            name="name"
-            value={account().name}
-            onChangeValue={(text) =>
-              setAccount((prev) => ({ ...prev, name: text }))
-            }
-            inputClass="mt-1 w-full max-w-[40rem]"
-            isRequired={mode() === "create"}
-          />
-          <InputTextItem
-            title="Nama Pengguna"
-            name="username"
-            value={account().username}
-            onChangeValue={(text) =>
-              setAccount((prev) => ({ ...prev, username: text }))
-            }
-            inputClass="mt-1 w-full max-w-[40rem]"
-            isRequired={mode() === "create"}
-          />
-          <div>
+      <Show when={mode() === "create" || (mode() === "edit" && !isLoading())}>
+        <div class="mt-2 px-6">
+          <form ref={formRef} class="space-y-4">
+            <InputTextItem
+              title="Nama Lengkap"
+              name="name"
+              value={account().name}
+              onChangeValue={(text) =>
+                setAccount((prev) => ({ ...prev, name: text }))
+              }
+              inputClass="mt-1 w-full max-w-[40rem]"
+              isRequired={mode() === "create"}
+            />
+            <InputTextItem
+              title="Nama Pengguna"
+              name="username"
+              value={account().username}
+              onChangeValue={(text) =>
+                setAccount((prev) => ({ ...prev, username: text }))
+              }
+              inputClass="mt-1 w-full max-w-[40rem]"
+              isRequired={mode() === "create"}
+            />
             <div>
-              <span>Kata Sandi</span>
-              <Show when={mode() === "create"}>
-                <span class="text-candy_apple_red">*</span>
-              </Show>
-              <Show when={mode() === "edit"}>
-                <span> (kosongi jika tidak ingin mengganti kata sandi)</span>
-              </Show>
+              <div>
+                <span>Kata Sandi</span>
+                <Show when={mode() === "create"}>
+                  <span class="text-candy_apple_red">*</span>
+                </Show>
+                <Show when={mode() === "edit"}>
+                  <span> (kosongi jika tidak ingin mengganti kata sandi)</span>
+                </Show>
+              </div>
+              <div class="mt-1 w-full max-w-[40rem]">
+                <InputText
+                  type="password"
+                  name="password"
+                  value={account().password}
+                  onChangeValue={(text) =>
+                    setAccount((prev) => ({ ...prev, password: text }))
+                  }
+                />
+              </div>
             </div>
-            <div class="mt-1 w-full max-w-[40rem]">
-              <InputText
-                type="password"
-                name="password"
-                value={account().password}
-                onChangeValue={(text) =>
-                  setAccount((prev) => ({ ...prev, password: text }))
-                }
-              />
-            </div>
-          </div>
-          <InputDropdownItem
-            title="Peran"
-            name="role"
-            value={{
-              title: formatAccountRole(account()!.role),
-              value: account()!.role,
-            }}
-            onChangeValue={(text) =>
-              setAccount((prev) => ({
-                ...prev,
-                role: text as AccountRoleE,
-              }))
-            }
-            options={[
-              {
-                title: formatAccountRole(AccountRoleE.Admin),
-                value: AccountRoleE.Admin,
-              },
-              {
-                title: formatAccountRole(AccountRoleE.SuperAdmin),
-                value: AccountRoleE.SuperAdmin,
-              },
-            ]}
-            isRequired={mode() === "create"}
-          />
-        </form>
-      </div>
-      <div class="mt-6 mx-6">
-        <button
-          type="button"
-          onclick={onSave}
-          class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
-        >
-          Simpan
-        </button>
-      </div>
+            <InputDropdownItem
+              title="Peran"
+              name="role"
+              value={{
+                title: formatAccountRole(account()!.role),
+                value: account()!.role,
+              }}
+              onChangeValue={(text) =>
+                setAccount((prev) => ({
+                  ...prev,
+                  role: text as AccountRoleE,
+                }))
+              }
+              options={[
+                {
+                  title: formatAccountRole(AccountRoleE.Admin),
+                  value: AccountRoleE.Admin,
+                },
+                {
+                  title: formatAccountRole(AccountRoleE.SuperAdmin),
+                  value: AccountRoleE.SuperAdmin,
+                },
+              ]}
+              isRequired={mode() === "create"}
+            />
+          </form>
+        </div>
+        <div class="mt-6 mx-6">
+          <button
+            type="button"
+            onclick={onSave}
+            class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
+          >
+            Simpan
+          </button>
+        </div>
+      </Show>
+      <Show when={isLoading()}>
+        <div class="mt-6 px-6">
+          <Loading />
+        </div>
+      </Show>
     </>
   );
 }

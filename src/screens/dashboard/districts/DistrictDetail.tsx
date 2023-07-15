@@ -6,6 +6,7 @@ import reqGetDistrictDetail from "../../../api/district/reqGetDistrictDetail";
 import SitePath from "../../../data/path";
 import reqDeleteDistrict from "../../../api/district/reqDeleteDistrict";
 import IconArrow from "../../../components/icon/Arrow";
+import Loading from "../../../components/loading/Loading";
 
 export default function DistrictDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -83,6 +84,9 @@ export default function DistrictDetailScreen() {
           <div class="space-y-4">
             <TextItem title="Nama Wilayah" value={district()!.name} />
           </div>
+        </Show>
+        <Show when={isLoading()}>
+          <Loading />
         </Show>
       </div>
     </>

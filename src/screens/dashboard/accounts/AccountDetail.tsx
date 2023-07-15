@@ -8,6 +8,7 @@ import reqDeleteAccount from "../../../api/account/reqDeleteAccount";
 import IconArrow from "../../../components/icon/Arrow";
 import formatAccountRole from "../../../utils/formatAccountRole";
 import { formatDatetime } from "../../../utils/formatDatetime";
+import Loading from "../../../components/loading/Loading";
 
 export default function AccountDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -102,6 +103,9 @@ export default function AccountDetailScreen() {
               }
             />
           </div>
+        </Show>
+        <Show when={isLoading()}>
+          <Loading />
         </Show>
       </div>
     </>

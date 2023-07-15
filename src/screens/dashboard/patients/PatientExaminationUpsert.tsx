@@ -19,6 +19,7 @@ import reqUpdatePatientExamination from "../../../api/patientExamination/reqUpda
 import IconArrow from "../../../components/icon/Arrow";
 import InputDatetime from "../../../components/form/InputDateTime";
 import MarkdownEditor from "../../../components/markdown/MarkdownEditor";
+import Loading from "../../../components/loading/Loading";
 
 export default function PatientExaminationUpsertScreen() {
   let formRef: HTMLFormElement | undefined;
@@ -162,52 +163,59 @@ export default function PatientExaminationUpsertScreen() {
           </Switch>
         </h1>
       </div>
-      <div class="mt-2 px-6">
-        <form ref={formRef} class="space-y-4">
-          <InputDatetimeItem
-            title="Waktu Pemeriksaan"
-            name="examination_time"
-            value={patientExamination().examinationTime}
-            onChangeValue={(val) =>
-              setPatientExamination((prev) => ({
-                ...prev,
-                examinationTime: val,
-              }))
-            }
-            inputClass="mt-1 w-full max-w-[40rem]"
-            isRequired={mode() === "create"}
-          />
-          <MarkdownItem
-            title="Pemeriksaan/Diagnosis"
-            name="examination"
-            value={patientExamination().examination}
-            onChangeValue={(val) =>
-              setPatientExamination((prev) => ({ ...prev, examination: val }))
-            }
-            inputClass="mt-1"
-            isRequired={mode() === "create"}
-          />
-          <MarkdownItem
-            title="Tindakan/Terapi"
-            name="treatment"
-            value={patientExamination().treatment}
-            onChangeValue={(val) =>
-              setPatientExamination((prev) => ({ ...prev, treatment: val }))
-            }
-            inputClass="mt-1"
-            isRequired={mode() === "create"}
-          />
-        </form>
-      </div>
-      <div class="mt-6 mx-6">
-        <button
-          type="button"
-          onclick={onSave}
-          class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
-        >
-          Simpan
-        </button>
-      </div>
+      <Show when={mode() === "create" || (mode() === "edit" && !isLoading())}>
+        <div class="mt-2 px-6">
+          <form ref={formRef} class="space-y-4">
+            <InputDatetimeItem
+              title="Waktu Pemeriksaan"
+              name="examination_time"
+              value={patientExamination().examinationTime}
+              onChangeValue={(val) =>
+                setPatientExamination((prev) => ({
+                  ...prev,
+                  examinationTime: val,
+                }))
+              }
+              inputClass="mt-1 w-full max-w-[40rem]"
+              isRequired={mode() === "create"}
+            />
+            <MarkdownItem
+              title="Pemeriksaan/Diagnosis"
+              name="examination"
+              value={patientExamination().examination}
+              onChangeValue={(val) =>
+                setPatientExamination((prev) => ({ ...prev, examination: val }))
+              }
+              inputClass="mt-1"
+              isRequired={mode() === "create"}
+            />
+            <MarkdownItem
+              title="Tindakan/Terapi"
+              name="treatment"
+              value={patientExamination().treatment}
+              onChangeValue={(val) =>
+                setPatientExamination((prev) => ({ ...prev, treatment: val }))
+              }
+              inputClass="mt-1"
+              isRequired={mode() === "create"}
+            />
+          </form>
+        </div>
+        <div class="mt-6 mx-6">
+          <button
+            type="button"
+            onclick={onSave}
+            class="block px-4 py-2 bg-light_sea_green text-white rounded-lg text-sm"
+          >
+            Simpan
+          </button>
+        </div>
+      </Show>
+      <Show when={isLoading()}>
+        <div class="mt-6 px-6">
+          <Loading />
+        </div>
+      </Show>
     </>
   );
 }
