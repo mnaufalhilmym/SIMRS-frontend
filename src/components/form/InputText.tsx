@@ -1,4 +1,5 @@
 interface Props {
+  type?: string;
   name: string;
   value?: string;
   onChangeValue: (text: string) => void;
@@ -7,7 +8,7 @@ interface Props {
 export default function InputText(props: Props) {
   return (
     <input
-      type="text"
+      type={props.type ?? "text"}
       name={props.name}
       value={props.value ?? ""}
       onchange={(e) => props.onChangeValue(e.target.value)}

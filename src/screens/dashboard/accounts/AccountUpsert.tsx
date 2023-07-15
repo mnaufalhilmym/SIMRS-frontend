@@ -187,6 +187,7 @@ export default function AccountUpsertScreen() {
             </div>
             <div class="mt-1 w-full max-w-[40rem]">
               <InputText
+                type="password"
                 name="password"
                 value={account().password}
                 onChangeValue={(text) =>
