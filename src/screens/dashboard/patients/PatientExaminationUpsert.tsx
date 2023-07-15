@@ -93,11 +93,9 @@ export default function PatientExaminationUpsertScreen() {
         ).treatment.value,
       };
 
-      if (data.examinationTime.split("T")[1].split(":").length < 3) {
-        data.examinationTime += ":00.000Z";
-      }
+      data.examinationTime = new Date(data.examinationTime).toISOString();
 
-      const res = await reqAddPatientExamination(data);
+      await reqAddPatientExamination(data);
 
       toast.success("Data berhasil disimpan");
 
@@ -131,11 +129,9 @@ export default function PatientExaminationUpsertScreen() {
         ).treatment.value,
       };
 
-      if (data.examinationTime.split("T")?.[1]?.split(":").length < 3) {
-        data.examinationTime += ":00.000Z";
-      }
+      data.examinationTime = new Date(data.examinationTime).toISOString();
 
-      const res = await reqUpdatePatientExamination(data);
+      await reqUpdatePatientExamination(data);
 
       toast.success("Data berhasil disimpan");
 

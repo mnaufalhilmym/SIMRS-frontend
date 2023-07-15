@@ -38,7 +38,6 @@ export default function DashboardWrapper() {
       }
     }
   });
-  console.log("loading");
 
   function signOut() {
     localStorage.removeItem("token");

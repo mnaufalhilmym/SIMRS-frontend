@@ -1,39 +1,39 @@
 export function formatDatetime(datetime: string) {
-  const fdatetime = datetime.split("T");
-  const [year, month, day] = fdatetime[0].split("-");
-  const [hour, minute, second_millisecond] = fdatetime[1]
-    .replace("Z", "")
-    .split(":");
+  datetime = new Date(new Date(datetime).toISOString()).toLocaleString("id-ID");
+  const fdatetime = datetime.split(",");
+  const [day, month, year] = fdatetime[0].trim().split("/");
+  const [hour, minute, second] = fdatetime[1].trim().split(".");
 
   return `${day} ${getMonthName(month)} ${year}, ${hour}:${minute}`;
 }
 
 export function formatDate(date: string) {
-  const fdatetime = date.split("T");
-  const [year, month, day] = fdatetime[0].split("-");
+  date = new Date(new Date(date).toISOString()).toLocaleString("id-ID");
+  const fdatetime = date.split(",");
+  const [day, month, year] = fdatetime[0].split("/");
 
   return `${day} ${getMonthName(month)} ${year}`;
 }
 
 function getMonthName(month: string) {
   switch (month) {
-    case "01":
+    case "1":
       return "Januari";
-    case "02":
+    case "2":
       return "Februari";
-    case "03":
+    case "3":
       return "Maret";
-    case "04":
+    case "4":
       return "April";
-    case "05":
+    case "5":
       return "Mei";
-    case "06":
+    case "6":
       return "Juni";
-    case "07":
+    case "7":
       return "Juli";
-    case "08":
+    case "8":
       return "Agustus";
-    case "09":
+    case "9":
       return "September";
     case "10":
       return "Oktober";
