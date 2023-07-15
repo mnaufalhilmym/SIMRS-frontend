@@ -10,6 +10,7 @@ import {
 import SiteHead from "../../../states/siteHead";
 import PatientI, {
   PatientGenderE,
+  RelationshipInFamilyE,
   patientDefault,
 } from "../../../types/patient";
 import reqGetPatientDetail from "../../../api/patient/reqGetPatientDetail";
@@ -24,6 +25,7 @@ import formatPatientGender from "../../../utils/formatPatientGender";
 import IconArrow from "../../../components/icon/Arrow";
 import DistrictI from "../../../types/district";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
+import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
 
 export default function PatientUpsertScreen() {
   let formRef: HTMLFormElement | undefined;
@@ -109,6 +111,11 @@ export default function PatientUpsertScreen() {
             family_card_number: { value: string };
           }
         ).family_card_number.value,
+        relationshipInFamily: (
+          formRef as typeof formRef & {
+            relationship_in_family: { value: RelationshipInFamilyE };
+          }
+        ).relationship_in_family.value,
         populationIdentificationNumber: (
           formRef as typeof formRef & {
             population_identification_number: { value: string };
@@ -213,6 +220,11 @@ export default function PatientUpsertScreen() {
             family_card_number: { value: string };
           }
         ).family_card_number.value,
+        relationshipInFamily: (
+          formRef as typeof formRef & {
+            relationship_in_family: { value: RelationshipInFamilyE };
+          }
+        ).relationship_in_family.value,
         populationIdentificationNumber: (
           formRef as typeof formRef & {
             population_identification_number: { value: string };
@@ -321,7 +333,7 @@ export default function PatientUpsertScreen() {
         >
           <div class="w-full max-w-[40rem] space-y-4">
             <InputTextItem
-              title="Nomor Rekam Medis"
+              title="Nomor Rekam Medis (No. RM)"
               name="medical_record_number"
               value={patient()?.medicalRecordNumber}
               onChangeValue={(text) =>
@@ -331,7 +343,7 @@ export default function PatientUpsertScreen() {
               isRequired={mode() === "create"}
             />
             <InputTextItem
-              title="Nomor Kartu Keluarga"
+              title="Nomor Kartu Keluarga (No. KK)"
               name="family_card_number"
               value={patient()?.familyCardNumber}
               onChangeValue={(text) =>
@@ -340,8 +352,28 @@ export default function PatientUpsertScreen() {
               inputClass="mt-1 w-full max-w-[40rem]"
               isRequired={mode() === "create"}
             />
+            <InputDropdownItem
+              title="Status Hubungan Dalam Keluarga"
+              name="relationship_in_family"
+              value={{
+                title: formatRelationshipInFamily(
+                  patient().relationshipInFamily
+                ),
+                value: patient().relationshipInFamily,
+              }}
+              onChangeValue={(text) =>
+                setPatient((prev) => ({
+                  ...prev,
+                  relationshipInFamily: text as RelationshipInFamilyE,
+                }))
+              }
+              options={Object.values(RelationshipInFamilyE).map((r) => ({
+                title: formatRelationshipInFamily(r),
+                value: r,
+              }))}
+            />
             <InputTextItem
-              title="Nomor Induk Kependudukan"
+              title="Nomor Induk Kependudukan (No. NIK)"
               name="population_identification_number"
               value={patient()?.populationIdentificationNumber}
               onChangeValue={(text) =>

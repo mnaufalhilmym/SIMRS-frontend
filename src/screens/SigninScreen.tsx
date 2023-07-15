@@ -78,6 +78,7 @@ export default function SigninScreen() {
             <div class="mt-1">
               <input
                 name="password"
+                type="password"
                 class="py-2 px-2.5 focus:outline-none focus:ring-4 focus:ring-light_sea_green/30 border border-2 border-netral-50 focus:border-light_sea_green rounded-lg"
               />
             </div>

@@ -16,6 +16,9 @@ import styles from "../../../styles/markdown.module.css";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import reqDeletePatientExamination from "../../../api/patientExamination/reqDeletePatientExamination";
+import NoData from "../../../components/nodata/NoData";
+import reqGetPatientList from "../../../api/patient/reqGetPatientList";
+import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
 
 export default function PatientDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -23,6 +26,7 @@ export default function PatientDetailScreen() {
 
   const [isLoading, setIsLoading] = createSignal(false);
   const [patient, setPatient] = createSignal<PatientI>();
+  const [family, setFamily] = createSignal<PatientI[]>([]);
   const [patientExaminations, setPatientExaminations] = createSignal<
     PatientExaminationI[]
   >([]);
@@ -36,20 +40,26 @@ export default function PatientDetailScreen() {
     try {
       setIsLoading(true);
 
-      const resPatient = await Promise.all([
+      const [resPatient, resPatientExamination] = await Promise.all([
         reqGetPatientDetail({ id: params.id }),
         reqGetPatientExaminationList({ patientId: params.id }),
       ]);
-      const resDistrict = await reqGetDistrictDetail({
-        id: resPatient[0].json.data.districtId,
-      });
+      const [resFamily, resDistrict] = await Promise.all([
+        reqGetPatientList({
+          searchByFamilyCardNumber: resPatient.json.data.familyCardNumber,
+        }),
+        reqGetDistrictDetail({
+          id: resPatient.json.data.districtId,
+        }),
+      ]);
 
-      if (!resPatient[0].status.toString().startsWith("2")) {
+      if (!resPatient.status.toString().startsWith("2")) {
         navigate(SitePath.dashboardPatientList, { replace: true });
       }
 
-      setPatient(resPatient[0].json.data);
-      setPatientExaminations(resPatient[1].json.data);
+      setPatient(resPatient.json.data);
+      setPatientExaminations(resPatientExamination.json.data);
+      setFamily(resFamily.json.data);
       setDistrict(resDistrict.json.data);
     } catch (err) {
       console.error(err);
@@ -117,15 +127,21 @@ export default function PatientDetailScreen() {
           <div class="flex flex-col xl:flex-row gap-x-4 space-y-4 xl:space-y-0">
             <div class="w-full max-w-[40rem] space-y-4">
               <TextItem
-                title="Nomor Rekam Medis"
+                title="Nomor Rekam Medis (No. RM)"
                 value={patient()!.medicalRecordNumber}
               />
               <TextItem
-                title="Nomor Kartu Keluarga"
+                title="Nomor Kartu Keluarga (No. KK)"
                 value={patient()!.familyCardNumber}
               />
               <TextItem
-                title="Nomor Induk Kependudukan"
+                title="Status Hubungan Dalam Keluarga"
+                value={formatRelationshipInFamily(
+                  patient()!.relationshipInFamily
+                )}
+              />
+              <TextItem
+                title="Nomor Induk Kependudukan (No. NIK)"
                 value={patient()!.populationIdentificationNumber}
               />
               <TextItem title="Nama Lengkap Pasien" value={patient()!.name} />
@@ -162,6 +178,57 @@ export default function PatientDetailScreen() {
               <TextItem title="Nomor Telepon" value={patient()!.phone} />
             </div>
           </div>
+        </Show>
+      </div>
+      <div class="mt-8 px-6 py-4">
+        <h2 class="font-medium text-2xl">Anggota Keluarga</h2>
+      </div>
+      <div class="px-6">
+        <Show when={family().length}>
+          <table class="w-full table-auto border-collapse border border-slate-500 text-sm">
+            <thead>
+              <tr>
+                <th class="p-2 border border-slate-600">No. RM</th>
+                <th class="p-2 border border-slate-600">Nama Lengkap</th>
+                <th class="p-2 border border-slate-600">
+                  Status Hubungan Dalam Keluarga
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <For each={family()}>
+                {(f) => (
+                  <tr>
+                    <td class="p-2 border border-slate-700">
+                      <A
+                        href={SitePath.dashboardPatientDetail.replace(
+                          ":id",
+                          f.id
+                        )}
+                        class="underline"
+                      >
+                        {f.medicalRecordNumber}
+                      </A>
+                    </td>
+                    <td class="p-2 border border-slate-700">
+                      <A
+                        href={SitePath.dashboardPatientDetail.replace(
+                          ":id",
+                          f.id
+                        )}
+                        class="underline"
+                      >
+                        {f.name}
+                      </A>
+                    </td>
+                    <td class="p-2 border border-slate-700">
+                      {formatRelationshipInFamily(f.relationshipInFamily)}
+                    </td>
+                  </tr>
+                )}
+              </For>
+            </tbody>
+          </table>
         </Show>
       </div>
       <div class="mt-8 px-6 py-4">
@@ -237,6 +304,11 @@ export default function PatientDetailScreen() {
             </tbody>
           </table>
         </Show>
+        <Show when={!isLoading() && !patientExaminations().length}>
+          <div class="flex-1 flex items-center">
+            <NoData />
+          </div>
+        </Show>
       </div>
     </>
   );
@@ -255,7 +327,7 @@ function TextItem(props: TextItemProps) {
       </div>
       <div class="mt-1 w-full max-w-[40rem]">
         <div class="w-full py-2 px-4 bg-black/5 border border-black/30 rounded-lg">
-          <span>{props.value}</span>
+          <span class="block h-6">{props.value}</span>
         </div>
       </div>
     </div>

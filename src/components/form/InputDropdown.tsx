@@ -27,7 +27,14 @@ export default function InputDropdown(props: Props) {
         onclick={toggleShowOptions}
         class="w-full py-2 px-4 bg-black/5 border border-black/30 rounded-lg"
       >
-        <span class="block h-6">{props.value?.title ?? props.placeholder}</span>
+        <span
+          class="block h-6"
+          classList={{ "text-gray-400": !props.value?.title }}
+        >
+          <Show when={props.value?.title} fallback={props.placeholder}>
+            {props.value?.title}
+          </Show>
+        </span>
       </div>
       <input type="text" name={props.name} value={props.value?.value} hidden />
       <Show when={isOptionsShown()}>

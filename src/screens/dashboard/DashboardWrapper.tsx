@@ -13,6 +13,7 @@ import { accountAuthDefault } from "../../types/auth";
 import reqAccountAuth from "../../api/auth/reqAccountAuth";
 import getBgProfilePicture from "../../utils/getBgProfilePicture";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
+import { AccountRoleE } from "../../types/account";
 
 export default function DashboardWrapper() {
   const location = useLocation();
@@ -40,6 +41,7 @@ export default function DashboardWrapper() {
   console.log("loading");
 
   function signOut() {
+    localStorage.removeItem("token");
     navigate("/");
   }
 
@@ -96,15 +98,17 @@ export default function DashboardWrapper() {
               location.pathname
             )}
           />
-          <NavItem
-            href={SitePath.dashboardAccountList}
-            icon={<IconPeople type="filled" class="w-5 h-5 text-white" />}
-            title="Akun"
-            isActive={checkIsEqualPath(
-              SitePath.dashboardAccountList,
-              location.pathname
-            )}
-          />
+          <Show when={AccountAuth.data().role === AccountRoleE.SuperAdmin}>
+            <NavItem
+              href={SitePath.dashboardAccountList}
+              icon={<IconPeople type="filled" class="w-5 h-5 text-white" />}
+              title="Akun"
+              isActive={checkIsEqualPath(
+                SitePath.dashboardAccountList,
+                location.pathname
+              )}
+            />
+          </Show>
         </nav>
         <div class="px-2">
           <button

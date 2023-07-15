@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useSearchParams } from "@solidjs/router";
 import SitePath from "../../../data/path";
 import { For, Show, createRenderEffect, createSignal } from "solid-js";
 import PatientI from "../../../types/patient";
@@ -8,13 +8,21 @@ import formatPatientGender from "../../../utils/formatPatientGender";
 import { formatDate } from "../../../utils/formatDatetime";
 import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
-import DistrictI from "../../../types/district";
+import DistrictI, { districtDefault } from "../../../types/district";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
+import SearchBar from "../../../components/search/SearchBar";
+import InputDropdown from "../../../components/form/InputDropdown";
 
 export default function PatientListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
   const [patients, setPatients] = createSignal<PatientI[]>([]);
   const [districts, setDistricts] = createSignal<DistrictI[]>([]);
+  const [filterByDistrict, setFilterByDistrict] = createSignal<DistrictI>();
+
+  const [searchParams, setSearchParams] = useSearchParams<{
+    search?: string;
+    searchByDistrictId?: string;
+  }>();
 
   createRenderEffect(() => {
     SiteHead.title = "Daftar Pasien";
@@ -24,19 +32,44 @@ export default function PatientListScreen() {
     try {
       setIsLoading(true);
 
-      const res = await Promise.all([
-        reqGetPatientList(),
-        reqGetDistrictList(),
-      ]);
+      const res = await reqGetPatientList({
+        search: searchParams.search,
+        searchByDistrictId: searchParams.searchByDistrictId,
+      });
 
-      setPatients(res[0].json.data);
-      setDistricts(res[1].json.data);
+      setPatients(res.json.data);
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   });
+
+  createRenderEffect(async () => {
+    try {
+      const res = await reqGetDistrictList();
+      setDistricts(res.json.data);
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  function setSearchValue(search?: string) {
+    setPatients([]);
+    setSearchParams({
+      search,
+      searchByDistrictId: searchParams.searchByDistrictId,
+    });
+  }
+
+  function setSearchByDistrictIdValue(district: DistrictI) {
+    setPatients([]);
+    setSearchParams({
+      search: searchParams.search,
+      searchByDistrictId: district.id,
+    });
+    setFilterByDistrict(district);
+  }
 
   return (
     <>
@@ -50,6 +83,38 @@ export default function PatientListScreen() {
         >
           Tambah data
         </A>
+      </div>
+      <div class="mt-6 mx-6 flex gap-x-4">
+        <div class="min-w-[28rem]">
+          <SearchBar
+            value={searchParams.search}
+            placeholder="Cari nama pasien, no. RM, no. KK, atau no. KTP"
+            executeSearch={setSearchValue}
+            inputClass="w-full px-4 py-2 bg-black/5 border border-black/30 focus:border-light_sea_green focus:outline-none focus:ring-2 focus:ring-light_sea_green rounded-lg"
+          />
+        </div>
+        <div class="min-w-[12rem]">
+          <FilterByDistrict
+            placeholder="Filter wilayah"
+            value={
+              filterByDistrict()
+                ? {
+                    title: filterByDistrict()!.name,
+                    value: filterByDistrict()!.id,
+                  }
+                : undefined
+            }
+            onChangeValue={(id) =>
+              setSearchByDistrictIdValue(
+                districts().find((d) => d.id === id) ?? districtDefault
+              )
+            }
+            options={[
+              { title: "-", value: "" },
+              ...districts().map((d) => ({ title: d.name, value: d.id })),
+            ]}
+          />
+        </div>
       </div>
       <div class="flex-1 mt-8 px-6 flex flex-col">
         <Show when={patients().length}>
@@ -128,5 +193,30 @@ export default function PatientListScreen() {
         </Show>
       </div>
     </>
+  );
+}
+
+interface FilterByDistrictProps {
+  placeholder?: string;
+  value?: {
+    title: string;
+    value: string;
+  };
+  options: {
+    title: string;
+    value: string;
+  }[];
+  onChangeValue: (text: string) => void;
+}
+
+function FilterByDistrict(props: FilterByDistrictProps) {
+  return (
+    <InputDropdown
+      name="districtId"
+      placeholder={props.placeholder}
+      value={props.value}
+      onChangeValue={props.onChangeValue}
+      options={props.options}
+    />
   );
 }

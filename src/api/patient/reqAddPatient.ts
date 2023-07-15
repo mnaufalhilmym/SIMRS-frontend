@@ -1,9 +1,13 @@
-import PatientI, { PatientGenderE } from "../../types/patient";
+import PatientI, {
+  PatientGenderE,
+  RelationshipInFamilyE,
+} from "../../types/patient";
 import Api from "../api";
 
 export default async function reqAddPatient({
   medicalRecordNumber,
   familyCardNumber,
+  relationshipInFamily,
   populationIdentificationNumber,
   name,
   gender,
@@ -20,6 +24,7 @@ export default async function reqAddPatient({
 }: {
   medicalRecordNumber: string;
   familyCardNumber: string;
+  relationshipInFamily: RelationshipInFamilyE;
   populationIdentificationNumber: string;
   name: string;
   gender: PatientGenderE;
@@ -37,6 +42,7 @@ export default async function reqAddPatient({
   const body = JSON.stringify({
     medicalRecordNumber,
     familyCardNumber,
+    relationshipInFamily,
     populationIdentificationNumber,
     name,
     gender,

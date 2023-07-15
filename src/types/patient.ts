@@ -4,6 +4,7 @@ export default interface PatientI {
   updatedAt: string;
   medicalRecordNumber: string;
   familyCardNumber: string;
+  relationshipInFamily: RelationshipInFamilyE;
   populationIdentificationNumber: string;
   name: string;
   gender: PatientGenderE;
@@ -19,6 +20,13 @@ export default interface PatientI {
   phone: string;
 }
 
+export enum RelationshipInFamilyE {
+  Unspecified = "-",
+  HeadOfFamily = "HEADOFFAMILY",
+  Wife = "WIFE",
+  Child = "CHILD",
+}
+
 export enum PatientGenderE {
   Unspecified = "-",
   Male = "MALE",
@@ -31,6 +39,7 @@ export const patientDefault = {
   updatedAt: "",
   medicalRecordNumber: "",
   familyCardNumber: "",
+  relationshipInFamily: RelationshipInFamilyE.Unspecified,
   populationIdentificationNumber: "",
   name: "",
   gender: PatientGenderE.Unspecified,
