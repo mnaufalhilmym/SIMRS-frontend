@@ -4,6 +4,7 @@ export default class SitePath {
   private static _base = SiteInfo.baseUrl;
 
   static base = this._base ?? "/";
+  static root = this._base ? this._base : "/";
   static signin = this._base + "/signin";
   static dashboard = this._base + "/dashboard";
 

@@ -5,41 +5,17 @@ import IconLogOut from "../../components/icon/LogOut";
 import IconPeople from "../../components/icon/People";
 import IconPersonAdd from "../../components/icon/PersonAdd";
 import IconHome from "../../components/icon/Home";
-import { JSXElement, Show, createRenderEffect } from "solid-js";
+import { JSXElement, Show } from "solid-js";
 import checkIsEqualPath from "../../utils/checkIsEqualPath";
 import IconLocation from "../../components/icon/Location";
 import AccountAuth from "../../states/accountAuth";
-import { accountAuthDefault } from "../../types/auth";
-import reqAccountAuth from "../../api/auth/reqAccountAuth";
 import getBgProfilePicture from "../../utils/getBgProfilePicture";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { AccountRoleE } from "../../types/account";
-import toast from "solid-toast";
 
 export default function DashboardWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
-
-  createRenderEffect(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) navigate(SitePath.signin);
-
-    if (AccountAuth.data() === accountAuthDefault) {
-      try {
-        const res = await reqAccountAuth();
-        if (!res) {
-          localStorage.removeItem("token");
-          navigate(SitePath.signin);
-          return;
-        }
-
-        AccountAuth.data = res.json.data;
-      } catch (err) {
-        console.error(err);
-        toast.error(err as string);
-      }
-    }
-  });
 
   function signOut() {
     localStorage.removeItem("token");

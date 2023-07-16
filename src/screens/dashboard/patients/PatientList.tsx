@@ -185,14 +185,10 @@ export default function PatientListScreen() {
           </table>
         </Show>
         <Show when={isLoading()}>
-          <div class="flex-1 flex items-center">
-            <Loading />
-          </div>
+          <Loading />
         </Show>
         <Show when={!isLoading() && !patients().length}>
-          <div class="flex-1 flex items-center">
-            <NoData />
-          </div>
+          <NoData />
         </Show>
       </div>
     </>
