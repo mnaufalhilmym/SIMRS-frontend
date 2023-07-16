@@ -51,6 +51,7 @@ export default function DistrictUpsertScreen() {
       setDistrict(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +96,7 @@ export default function DistrictUpsertScreen() {
       );
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -122,6 +124,7 @@ export default function DistrictUpsertScreen() {
       );
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +143,7 @@ export default function DistrictUpsertScreen() {
           </Switch>
         </h1>
       </div>
-      <Show when={mode() === "create" || (mode() === "edit" && !isLoading())}>
+      <Show when={!isLoading()}>
         <div class="mt-2 px-6">
           <form ref={formRef} class="space-y-4">
             <InputTextItem

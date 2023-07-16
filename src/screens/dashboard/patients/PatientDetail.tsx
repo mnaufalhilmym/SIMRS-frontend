@@ -20,6 +20,7 @@ import NoData from "../../../components/nodata/NoData";
 import reqGetPatientList from "../../../api/patient/reqGetPatientList";
 import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
 import Loading from "../../../components/loading/Loading";
+import toast from "solid-toast";
 
 export default function PatientDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -64,6 +65,7 @@ export default function PatientDetailScreen() {
       setDistrict(resDistrict.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
       navigate(SitePath.dashboardPatientList, { replace: true });
     } finally {
       setIsLoading(false);
@@ -83,6 +85,7 @@ export default function PatientDetailScreen() {
       navigate(SitePath.dashboardPatientList, { replace: true });
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -97,6 +100,7 @@ export default function PatientDetailScreen() {
       setPatientExaminations(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     }
   }
 

@@ -8,6 +8,7 @@ import { formatDatetime } from "../../../utils/formatDatetime";
 import formatAccountRole from "../../../utils/formatAccountRole";
 import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
+import toast from "solid-toast";
 
 export default function AccountListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -26,6 +27,7 @@ export default function AccountListScreen() {
       setAccounts(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -88,14 +90,10 @@ export default function AccountListScreen() {
           </table>
         </Show>
         <Show when={isLoading()}>
-          <div class="flex-1 flex items-center">
-            <Loading />
-          </div>
+          <Loading />
         </Show>
         <Show when={!isLoading() && !accounts().length}>
-          <div class="flex-1 flex items-center">
-            <NoData />
-          </div>
+          <NoData />
         </Show>
       </div>
     </>

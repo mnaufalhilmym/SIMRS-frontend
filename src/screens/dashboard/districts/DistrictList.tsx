@@ -7,6 +7,7 @@ import SitePath from "../../../data/path";
 import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
 import reqCountPatient from "../../../api/patient/reqCountPatient";
+import toast from "solid-toast";
 
 export default function DistrictListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -37,6 +38,7 @@ export default function DistrictListScreen() {
       setDistricts(data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -89,14 +91,10 @@ export default function DistrictListScreen() {
           </table>
         </Show>
         <Show when={isLoading()}>
-          <div class="flex-1 flex items-center">
-            <Loading />
-          </div>
+          <Loading />
         </Show>
         <Show when={!isLoading() && !districts().length}>
-          <div class="flex-1 flex items-center">
-            <NoData />
-          </div>
+          <NoData />
         </Show>
       </div>
     </>

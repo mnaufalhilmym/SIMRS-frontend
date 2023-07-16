@@ -7,6 +7,7 @@ import SitePath from "../../../data/path";
 import reqDeleteDistrict from "../../../api/district/reqDeleteDistrict";
 import IconArrow from "../../../components/icon/Arrow";
 import Loading from "../../../components/loading/Loading";
+import toast from "solid-toast";
 
 export default function DistrictDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -32,6 +33,7 @@ export default function DistrictDetailScreen() {
       setDistrict(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
       navigate(SitePath.dashboardDistrictList, { replace: true });
     } finally {
       setIsLoading(false);
@@ -51,6 +53,7 @@ export default function DistrictDetailScreen() {
       navigate(SitePath.dashboardDistrictList, { replace: true });
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +83,7 @@ export default function DistrictDetailScreen() {
         </button>
       </div>
       <div class="mt-8 px-6">
-        <Show when={district()}>
+        <Show when={district() && !isLoading()}>
           <div class="space-y-4">
             <TextItem title="Nama Wilayah" value={district()!.name} />
           </div>

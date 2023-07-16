@@ -14,6 +14,7 @@ import reqAccountAuth from "../../api/auth/reqAccountAuth";
 import getBgProfilePicture from "../../utils/getBgProfilePicture";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { AccountRoleE } from "../../types/account";
+import toast from "solid-toast";
 
 export default function DashboardWrapper() {
   const location = useLocation();
@@ -35,6 +36,7 @@ export default function DashboardWrapper() {
         AccountAuth.data = res.json.data;
       } catch (err) {
         console.error(err);
+        toast.error(err as string);
       }
     }
   });

@@ -9,6 +9,7 @@ import IconArrow from "../../../components/icon/Arrow";
 import formatAccountRole from "../../../utils/formatAccountRole";
 import { formatDatetime } from "../../../utils/formatDatetime";
 import Loading from "../../../components/loading/Loading";
+import toast from "solid-toast";
 
 export default function AccountDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -34,6 +35,7 @@ export default function AccountDetailScreen() {
       setAccount(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
       navigate(SitePath.dashboardAccountList, { replace: true });
     } finally {
       setIsLoading(false);
@@ -53,6 +55,7 @@ export default function AccountDetailScreen() {
       navigate(SitePath.dashboardAccountList, { replace: true });
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +85,7 @@ export default function AccountDetailScreen() {
         </button>
       </div>
       <div class="mt-8 px-6">
-        <Show when={account()}>
+        <Show when={account() && !isLoading()}>
           <div class="space-y-4">
             <TextItem title="Nama Lengkap" value={account()!.name} />
             <TextItem title="Nama Pengguna" value={account()!.username} />

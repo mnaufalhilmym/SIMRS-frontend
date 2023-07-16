@@ -12,6 +12,7 @@ import DistrictI, { districtDefault } from "../../../types/district";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
 import SearchBar from "../../../components/search/SearchBar";
 import InputDropdown from "../../../components/form/InputDropdown";
+import toast from "solid-toast";
 
 export default function PatientListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -40,6 +41,7 @@ export default function PatientListScreen() {
       setPatients(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -51,6 +53,7 @@ export default function PatientListScreen() {
       setDistricts(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     }
   });
 

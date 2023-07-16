@@ -56,6 +56,7 @@ export default function PatientExaminationUpsertScreen() {
       setPatientExamination(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -105,6 +106,7 @@ export default function PatientExaminationUpsertScreen() {
       });
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -141,6 +143,7 @@ export default function PatientExaminationUpsertScreen() {
       });
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }

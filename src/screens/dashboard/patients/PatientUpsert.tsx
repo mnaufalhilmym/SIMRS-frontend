@@ -58,6 +58,7 @@ export default function PatientUpsertScreen() {
       setDistricts(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     }
   });
 
@@ -72,6 +73,7 @@ export default function PatientUpsertScreen() {
       setPatient(res.json.data);
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -198,6 +200,7 @@ export default function PatientUpsertScreen() {
       );
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -309,6 +312,7 @@ export default function PatientUpsertScreen() {
       );
     } catch (err) {
       console.error(err);
+      toast.error(err as string);
     } finally {
       setIsLoading(false);
     }
