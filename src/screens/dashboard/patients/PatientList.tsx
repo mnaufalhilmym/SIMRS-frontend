@@ -66,6 +66,8 @@ export default function PatientListScreen() {
   }
 
   function setSearchByDistrictIdValue(district: DistrictI) {
+    if (filterByDistrict() === district) return;
+
     setPatients([]);
     setSearchParams({
       search: searchParams.search,
