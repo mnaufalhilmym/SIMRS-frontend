@@ -128,7 +128,7 @@ export default function PatientDetailScreen() {
         </button>
       </div>
       <div class="mt-8 px-6">
-        <Show when={patient()}>
+        <Show when={patient() && !isLoading()}>
           <div class="flex flex-col xl:flex-row gap-x-4 space-y-4 xl:space-y-0">
             <div class="w-full max-w-[40rem] space-y-4">
               <TextItem
@@ -192,7 +192,7 @@ export default function PatientDetailScreen() {
         <h2 class="font-medium text-2xl">Anggota Keluarga</h2>
       </div>
       <div class="px-6">
-        <Show when={family().length}>
+        <Show when={family().length && !isLoading()}>
           <table class="w-full table-auto border-collapse border border-slate-500 text-sm">
             <thead>
               <tr>
@@ -257,7 +257,7 @@ export default function PatientDetailScreen() {
         </A>
       </div>
       <div class="mt-8 px-6">
-        <Show when={patientExaminations().length}>
+        <Show when={patientExaminations().length && !isLoading()}>
           <table class="w-full table-auto border-collapse border border-slate-500 text-sm">
             <thead>
               <tr>
