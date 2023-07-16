@@ -67,7 +67,7 @@ export default function AccountDetailScreen() {
         <button onclick={navigateBack}>
           <IconArrow class="w-6 h-6" direction="back" />
         </button>
-        <h1 class="font-medium text-2xl">Detail Pasien</h1>
+        <h1 class="font-medium text-2xl">Detail Akun</h1>
       </div>
       <div class="mx-6 flex gap-x-2">
         <A

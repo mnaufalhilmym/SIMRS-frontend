@@ -90,29 +90,83 @@ export default function DashboardWrapper() {
             href={SitePath.dashboardPatientList}
             icon={<IconPersonAdd type="filled" class="w-5 h-5 text-white" />}
             title="Pasien"
-            isActive={checkIsEqualPath(
-              SitePath.dashboardPatientList,
-              location.pathname
-            )}
+            isActive={
+              checkIsEqualPath(
+                SitePath.dashboardPatientList,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientDetail,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientCreate,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientEdit,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientExaminationCreate,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientExaminationEdit,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardPatientExaminationList,
+                location.pathname
+              )
+            }
           />
           <NavItem
             href={SitePath.dashboardDistrictList}
             icon={<IconLocation type="filled" class="w-5 h-5 text-white" />}
             title="Wilayah"
-            isActive={checkIsEqualPath(
-              SitePath.dashboardDistrictList,
-              location.pathname
-            )}
+            isActive={
+              checkIsEqualPath(
+                SitePath.dashboardDistrictList,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardDistrictDetail,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardDistrictCreate,
+                location.pathname
+              ) ||
+              checkIsEqualPath(
+                SitePath.dashboardDistrictEdit,
+                location.pathname
+              )
+            }
           />
           <Show when={AccountAuth.data().role === AccountRoleE.SuperAdmin}>
             <NavItem
               href={SitePath.dashboardAccountList}
               icon={<IconPeople type="filled" class="w-5 h-5 text-white" />}
               title="Akun"
-              isActive={checkIsEqualPath(
-                SitePath.dashboardAccountList,
-                location.pathname
-              )}
+              isActive={
+                checkIsEqualPath(
+                  SitePath.dashboardAccountList,
+                  location.pathname
+                ) ||
+                checkIsEqualPath(
+                  SitePath.dashboardAccountDetail,
+                  location.pathname
+                ) ||
+                checkIsEqualPath(
+                  SitePath.dashboardAccountCreate,
+                  location.pathname
+                ) ||
+                checkIsEqualPath(
+                  SitePath.dashboardAccountEdit,
+                  location.pathname
+                )
+              }
             />
           </Show>
         </nav>
