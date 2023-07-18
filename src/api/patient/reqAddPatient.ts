@@ -1,6 +1,7 @@
 import PatientI, {
   PatientGenderE,
   RelationshipInFamilyE,
+  SalutationE,
 } from "../../types/patient";
 import Api from "../api";
 
@@ -9,6 +10,7 @@ export default async function reqAddPatient({
   familyCardNumber,
   relationshipInFamily,
   populationIdentificationNumber,
+  salutation,
   name,
   gender,
   placeOfBirth,
@@ -26,6 +28,7 @@ export default async function reqAddPatient({
   familyCardNumber: string;
   relationshipInFamily: RelationshipInFamilyE;
   populationIdentificationNumber: string;
+  salutation: SalutationE;
   name: string;
   gender: PatientGenderE;
   placeOfBirth: string;
@@ -44,6 +47,7 @@ export default async function reqAddPatient({
     familyCardNumber,
     relationshipInFamily,
     populationIdentificationNumber,
+    salutation,
     name,
     gender,
     placeOfBirth,

@@ -36,7 +36,9 @@ export default function MainWrapper() {
           }
         } catch (err) {
           console.error(err);
-          toast.error(err as string);
+          localStorage.removeItem("token");
+          navigate(SitePath.signin);
+          return;
         }
       }
     } else {

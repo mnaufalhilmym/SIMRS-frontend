@@ -4,7 +4,7 @@ import { For, Show, createRenderEffect, createSignal } from "solid-js";
 import PatientI from "../../../types/patient";
 import SiteHead from "../../../states/siteHead";
 import reqGetPatientList from "../../../api/patient/reqGetPatientList";
-import formatPatientGender from "../../../utils/formatPatientGender";
+import formatGender from "../../../utils/formatGender";
 import { formatDate } from "../../../utils/formatDatetime";
 import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
@@ -169,7 +169,7 @@ export default function PatientListScreen() {
                       </A>
                     </td>
                     <td class="p-2 border border-slate-700">
-                      {formatPatientGender(p.gender)}
+                      {formatGender(p.gender)}
                     </td>
                     <td class="p-2 border border-slate-700">
                       {p.placeOfBirth}, {formatDate(p.dateOfBirth)}

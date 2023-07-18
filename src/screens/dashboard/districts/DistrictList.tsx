@@ -27,7 +27,9 @@ export default function DistrictListScreen() {
 
       const data = await Promise.all(
         res.json.data.map(async (d) => {
-          const patientCount = await reqCountPatient({ districtId: d.id });
+          const patientCount = await reqCountPatient({
+            searchByDistrictId: d.id,
+          });
           return {
             ...d,
             patientNumber: patientCount.json.data,

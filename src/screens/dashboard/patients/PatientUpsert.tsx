@@ -11,6 +11,7 @@ import SiteHead from "../../../states/siteHead";
 import PatientI, {
   PatientGenderE,
   RelationshipInFamilyE,
+  SalutationE,
   patientDefault,
 } from "../../../types/patient";
 import reqGetPatientDetail from "../../../api/patient/reqGetPatientDetail";
@@ -21,12 +22,13 @@ import reqUpdatePatient from "../../../api/patient/reqUpdatePatient";
 import InputText from "../../../components/form/InputText";
 import InputDropdown from "../../../components/form/InputDropdown";
 import InputDate from "../../../components/form/InputDate";
-import formatPatientGender from "../../../utils/formatPatientGender";
+import formatGender from "../../../utils/formatGender";
 import IconArrow from "../../../components/icon/Arrow";
 import DistrictI from "../../../types/district";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
 import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
 import Loading from "../../../components/loading/Loading";
+import formatSalutation from "../../../utils/formatSalutation";
 
 export default function PatientUpsertScreen() {
   let formRef: HTMLFormElement | undefined;
@@ -124,6 +126,11 @@ export default function PatientUpsertScreen() {
             population_identification_number: { value: string };
           }
         ).population_identification_number.value,
+        salutation: (
+          formRef as typeof formRef & {
+            salutation: { value: SalutationE };
+          }
+        ).salutation.value,
         name: (
           formRef as typeof formRef & {
             name: { value: string };
@@ -234,6 +241,11 @@ export default function PatientUpsertScreen() {
             population_identification_number: { value: string };
           }
         ).population_identification_number.value,
+        salutation: (
+          formRef as typeof formRef & {
+            salutation: { value: SalutationE };
+          }
+        ).salutation.value,
         name: (
           formRef as typeof formRef & {
             name: { value: string };
@@ -349,6 +361,149 @@ export default function PatientUpsertScreen() {
                 isRequired={mode() === "create"}
               />
               <InputTextItem
+                title="Nomor Induk Kependudukan (No. NIK)"
+                name="population_identification_number"
+                value={patient()?.populationIdentificationNumber}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({
+                    ...prev,
+                    populationIdentificationNumber: text,
+                  }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <div class="w-full max-w-[40rem] flex gap-x-2">
+                <InputDropdownItem
+                  title="Sapaan"
+                  name="salutation"
+                  value={{
+                    title: formatSalutation(patient().salutation),
+                    value: patient().salutation,
+                  }}
+                  onChangeValue={(val) =>
+                    setPatient((prev) => ({
+                      ...prev,
+                      salutation: val as SalutationE,
+                    }))
+                  }
+                  options={Object.values(SalutationE).map((r) => ({
+                    title: formatSalutation(r),
+                    value: r,
+                  }))}
+                />
+                <InputTextItem
+                  title="Nama Lengkap Pasien"
+                  name="name"
+                  value={patient()?.name}
+                  onChangeValue={(text) =>
+                    setPatient((prev) => ({ ...prev, name: text }))
+                  }
+                  outerClass="flex-1"
+                  inputClass="mt-1 w-full"
+                  isRequired={mode() === "create"}
+                />
+              </div>
+              <div class="w-full max-w-[40rem] flex gap-x-2">
+                <InputTextItem
+                  title="Tempat Lahir"
+                  name="place_of_birth"
+                  value={patient()?.placeOfBirth}
+                  onChangeValue={(text) =>
+                    setPatient((prev) => ({ ...prev, placeOfBirth: text }))
+                  }
+                  outerClass="flex-1"
+                  inputClass="mt-1 w-full"
+                  isRequired={mode() === "create"}
+                />
+                <InputDateItem
+                  title="Tanggal Lahir"
+                  name="date_of_birth"
+                  value={patient()?.dateOfBirth}
+                  onChangeValue={(text) =>
+                    setPatient((prev) => ({ ...prev, dateOfBirth: text }))
+                  }
+                  outerClass="flex-1"
+                  inputClass="mt-1 w-full"
+                  isRequired={mode() === "create"}
+                />
+              </div>
+              <InputDropdownItem
+                title="Jenis Kelamin"
+                name="gender"
+                value={{
+                  title: formatGender(patient()!.gender),
+                  value: patient().gender,
+                }}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({
+                    ...prev,
+                    gender: text as PatientGenderE,
+                  }))
+                }
+                options={[
+                  {
+                    title: formatGender(PatientGenderE.Male),
+                    value: PatientGenderE.Male,
+                  },
+                  {
+                    title: formatGender(PatientGenderE.Female),
+                    value: PatientGenderE.Female,
+                  },
+                ]}
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Asuransi"
+                name="insurence"
+                value={patient()?.insurence}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, insurence: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Pekerjaan"
+                name="job"
+                value={patient()?.job}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, job: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
+                title="Nomor Telepon"
+                name="phone"
+                value={patient()?.phone}
+                onChangeValue={(text) =>
+                  setPatient((prev) => ({ ...prev, phone: text }))
+                }
+                inputClass="mt-1 w-full max-w-[40rem]"
+                isRequired={mode() === "create"}
+              />
+            </div>
+            <div class="w-full max-w-[40rem] space-y-4">
+              <InputDropdownItem
+                title="Wilayah"
+                name="district_id"
+                value={{
+                  title:
+                    districts().find((d) => d.id === patient().districtId)
+                      ?.name ?? "-",
+                  value: patient().districtId ?? "-",
+                }}
+                onChangeValue={(val) =>
+                  setPatient((prev) => ({ ...prev, districtId: val }))
+                }
+                options={districts().map((d) => ({
+                  title: d.name,
+                  value: d.id,
+                }))}
+                isRequired={mode() === "create"}
+              />
+              <InputTextItem
                 title="Nomor Kartu Keluarga (No. KK)"
                 name="family_card_number"
                 value={patient()?.familyCardNumber}
@@ -379,123 +534,11 @@ export default function PatientUpsertScreen() {
                 }))}
               />
               <InputTextItem
-                title="Nomor Induk Kependudukan (No. NIK)"
-                name="population_identification_number"
-                value={patient()?.populationIdentificationNumber}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({
-                    ...prev,
-                    populationIdentificationNumber: text,
-                  }))
-                }
-                inputClass="mt-1 w-full max-w-[40rem]"
-                isRequired={mode() === "create"}
-              />
-              <InputTextItem
-                title="Nama Lengkap Pasien"
-                name="name"
-                value={patient()?.name}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, name: text }))
-                }
-                inputClass="mt-1 w-full max-w-[40rem]"
-                isRequired={mode() === "create"}
-              />
-              <InputDropdownItem
-                title="Jenis Kelamin"
-                name="gender"
-                value={{
-                  title: formatPatientGender(patient()!.gender),
-                  value: patient().gender,
-                }}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({
-                    ...prev,
-                    gender: text as PatientGenderE,
-                  }))
-                }
-                options={[
-                  {
-                    title: formatPatientGender(PatientGenderE.Male),
-                    value: PatientGenderE.Male,
-                  },
-                  {
-                    title: formatPatientGender(PatientGenderE.Female),
-                    value: PatientGenderE.Female,
-                  },
-                ]}
-                isRequired={mode() === "create"}
-              />
-              <div class="w-full max-w-[40rem] flex gap-x-2">
-                <InputTextItem
-                  title="Tempat Lahir"
-                  name="place_of_birth"
-                  value={patient()?.placeOfBirth}
-                  onChangeValue={(text) =>
-                    setPatient((prev) => ({ ...prev, placeOfBirth: text }))
-                  }
-                  outerClass="flex-1"
-                  inputClass="mt-1 w-full"
-                  isRequired={mode() === "create"}
-                />
-                <InputDateItem
-                  title="Tanggal Lahir"
-                  name="date_of_birth"
-                  value={patient()?.dateOfBirth}
-                  onChangeValue={(text) =>
-                    setPatient((prev) => ({ ...prev, dateOfBirth: text }))
-                  }
-                  outerClass="flex-1"
-                  inputClass="mt-1 w-full"
-                  isRequired={mode() === "create"}
-                />
-              </div>
-              <InputTextItem
                 title="Alamat"
                 name="address"
                 value={patient()?.address}
                 onChangeValue={(text) =>
                   setPatient((prev) => ({ ...prev, address: text }))
-                }
-                inputClass="mt-1 w-full max-w-[40rem]"
-                isRequired={mode() === "create"}
-              />
-            </div>
-            <div class="w-full max-w-[40rem] space-y-4">
-              <InputDropdownItem
-                title="Wilayah"
-                name="district_id"
-                value={{
-                  title:
-                    districts().find((d) => d.id === patient().districtId)
-                      ?.name ?? "-",
-                  value: patient().districtId ?? "-",
-                }}
-                onChangeValue={(val) =>
-                  setPatient((prev) => ({ ...prev, districtId: val }))
-                }
-                options={districts().map((d) => ({
-                  title: d.name,
-                  value: d.id,
-                }))}
-                isRequired={mode() === "create"}
-              />
-              <InputTextItem
-                title="Pekerjaan"
-                name="job"
-                value={patient()?.job}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, job: text }))
-                }
-                inputClass="mt-1 w-full max-w-[40rem]"
-                isRequired={mode() === "create"}
-              />
-              <InputTextItem
-                title="Agama"
-                name="religion"
-                value={patient()?.religion}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, religion: text }))
                 }
                 inputClass="mt-1 w-full max-w-[40rem]"
                 isRequired={mode() === "create"}
@@ -511,16 +554,6 @@ export default function PatientUpsertScreen() {
                 isRequired={mode() === "create"}
               />
               <InputTextItem
-                title="Asuransi"
-                name="insurence"
-                value={patient()?.insurence}
-                onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, insurence: text }))
-                }
-                inputClass="mt-1 w-full max-w-[40rem]"
-                isRequired={mode() === "create"}
-              />
-              <InputTextItem
                 title="Nomor Asuransi"
                 name="insurence_number"
                 value={patient()?.insurenceNumber}
@@ -531,11 +564,11 @@ export default function PatientUpsertScreen() {
                 isRequired={mode() === "create"}
               />
               <InputTextItem
-                title="Nomor Telepon"
-                name="phone"
-                value={patient()?.phone}
+                title="Agama"
+                name="religion"
+                value={patient()?.religion}
                 onChangeValue={(text) =>
-                  setPatient((prev) => ({ ...prev, phone: text }))
+                  setPatient((prev) => ({ ...prev, religion: text }))
                 }
                 inputClass="mt-1 w-full max-w-[40rem]"
                 isRequired={mode() === "create"}

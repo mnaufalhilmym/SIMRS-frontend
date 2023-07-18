@@ -1,6 +1,6 @@
 import { PatientGenderE } from "../types/patient";
 
-export default function formatPatientGender(gender: PatientGenderE) {
+export default function formatGender(gender: PatientGenderE) {
   switch (gender) {
     case PatientGenderE.Male:
       return "Laki-laki";

@@ -6,6 +6,7 @@ export default interface PatientI {
   familyCardNumber: string;
   relationshipInFamily: RelationshipInFamilyE;
   populationIdentificationNumber: string;
+  salutation: SalutationE;
   name: string;
   gender: PatientGenderE;
   placeOfBirth: string;
@@ -27,6 +28,14 @@ export enum RelationshipInFamilyE {
   Child = "CHILD",
 }
 
+export enum SalutationE {
+  Unspecified = "-",
+  MR = "MR",
+  MRS = "MRS",
+  MISS = "MISS",
+  CHILD = "CHILD",
+}
+
 export enum PatientGenderE {
   Unspecified = "-",
   Male = "MALE",
@@ -41,6 +50,7 @@ export const patientDefault = {
   familyCardNumber: "",
   relationshipInFamily: RelationshipInFamilyE.Unspecified,
   populationIdentificationNumber: "",
+  salutation: SalutationE.Unspecified,
   name: "",
   gender: PatientGenderE.Unspecified,
   placeOfBirth: "",

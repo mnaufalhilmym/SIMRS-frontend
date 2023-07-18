@@ -7,7 +7,7 @@ import SitePath from "../../../data/path";
 import reqDeletePatient from "../../../api/patient/reqDeletePatient";
 import IconArrow from "../../../components/icon/Arrow";
 import { formatDate, formatDatetime } from "../../../utils/formatDatetime";
-import formatPatientGender from "../../../utils/formatPatientGender";
+import formatGender from "../../../utils/formatGender";
 import DistrictI, { districtDefault } from "../../../types/district";
 import reqGetDistrictDetail from "../../../api/district/reqGetDistrictDetail";
 import PatientExaminationI from "../../../types/patientExamination";
@@ -136,24 +136,10 @@ export default function PatientDetailScreen() {
                 value={patient()!.medicalRecordNumber}
               />
               <TextItem
-                title="Nomor Kartu Keluarga (No. KK)"
-                value={patient()!.familyCardNumber}
-              />
-              <TextItem
-                title="Status Hubungan Dalam Keluarga"
-                value={formatRelationshipInFamily(
-                  patient()!.relationshipInFamily
-                )}
-              />
-              <TextItem
                 title="Nomor Induk Kependudukan (No. NIK)"
                 value={patient()!.populationIdentificationNumber}
               />
               <TextItem title="Nama Lengkap Pasien" value={patient()!.name} />
-              <TextItem
-                title="Jenis Kelamin"
-                value={formatPatientGender(patient()!.gender)}
-              />
               <div class="w-full max-w-[40rem] flex gap-x-2">
                 <div class="flex-1">
                   <TextItem
@@ -168,19 +154,33 @@ export default function PatientDetailScreen() {
                   />
                 </div>
               </div>
-              <TextItem title="Alamat" value={patient()!.address} />
+              <TextItem
+                title="Jenis Kelamin"
+                value={formatGender(patient()!.gender)}
+              />
+              <TextItem title="Asuransi" value={patient()!.insurence} />
+              <TextItem title="Pekerjaan" value={patient()!.job} />
+              <TextItem title="Nomor Telepon" value={patient()!.phone} />
             </div>
             <div class="w-full max-w-[40rem] space-y-4">
               <TextItem title="Wilayah" value={district()!.name} />
-              <TextItem title="Pekerjaan" value={patient()!.job} />
-              <TextItem title="Agama" value={patient()!.religion} />
+              <TextItem
+                title="Nomor Kartu Keluarga (No. KK)"
+                value={patient()!.familyCardNumber}
+              />
+              <TextItem
+                title="Status Hubungan Dalam Keluarga"
+                value={formatRelationshipInFamily(
+                  patient()!.relationshipInFamily
+                )}
+              />
+              <TextItem title="Alamat" value={patient()!.address} />
               <TextItem title="Golongan Darah" value={patient()!.bloodGroup} />
-              <TextItem title="Asuransi" value={patient()!.insurence} />
               <TextItem
                 title="Nomor Asuransi"
                 value={patient()!.insurenceNumber}
               />
-              <TextItem title="Nomor Telepon" value={patient()!.phone} />
+              <TextItem title="Agama" value={patient()!.religion} />
             </div>
           </div>
         </Show>
