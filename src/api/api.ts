@@ -37,6 +37,13 @@ export default class Api {
     return this.fetch<T>(input, { ...init, method: "POST" });
   }
 
+  static async put<T>(
+    input: RequestInfo | URL,
+    init?: RequestInit | undefined
+  ): Promise<{ status: number; json: ResponseI<T> }> {
+    return this.fetch<T>(input, { ...init, method: "PUT" });
+  }
+
   static async patch<T>(
     input: RequestInfo | URL,
     init?: RequestInit | undefined

@@ -12,6 +12,7 @@ import AccountAuth from "../../states/accountAuth";
 import getBgProfilePicture from "../../utils/getBgProfilePicture";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { AccountRoleE } from "../../types/account";
+import IconSettings from "../../components/icon/Settings";
 
 export default function DashboardWrapper() {
   const location = useLocation();
@@ -121,6 +122,21 @@ export default function DashboardWrapper() {
             }
           />
           <Show when={AccountAuth.data().role === AccountRoleE.SuperAdmin}>
+            <NavItem
+              href={SitePath.dashboardSetting}
+              icon={<IconSettings type="filled" class="w-5 h-5 text-white" />}
+              title="Pengaturan"
+              isActive={
+                checkIsEqualPath(
+                  SitePath.dashboardSetting,
+                  location.pathname
+                ) ||
+                checkIsEqualPath(
+                  SitePath.dashboardSettingEdit,
+                  location.pathname
+                )
+              }
+            />
             <NavItem
               href={SitePath.dashboardAccountList}
               icon={<IconPeople type="filled" class="w-5 h-5 text-white" />}

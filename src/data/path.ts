@@ -29,4 +29,7 @@ export default class SitePath {
     this.dashboardDistrictDetail + "/patient-examinations";
   static dashboardPatientExaminationEdit =
     this.dashboardPatientExaminationList + "/:examId";
+
+  static dashboardSetting = this.dashboard + "/setting";
+  static dashboardSettingEdit = this.dashboardSetting + "/edit";
 }

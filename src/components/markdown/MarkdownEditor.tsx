@@ -238,8 +238,8 @@ export default function MarkdownEditor(props: Props) {
             onclick={toggleMode}
             class="px-4 py-1 border border-black/30 rounded-lg"
           >
-            <Show when={mode() === "preview"}>Markdown mode</Show>
-            <Show when={mode() === "markdown"}>Preview mode</Show>
+            <Show when={mode() === "preview"}>Mode Markdown</Show>
+            <Show when={mode() === "markdown"}>Mode Pratinjau</Show>
           </button>
         </div>
       </div>
@@ -253,7 +253,7 @@ export default function MarkdownEditor(props: Props) {
       />
       <Show when={mode() === "preview"}>
         <p
-          innerHTML={DOMPurify.sanitize(marked.parse(props.value))}
+          innerHTML={DOMPurify.sanitize(marked.parse(props.value ?? ""))}
           class={`h-80 py-2 px-4 text-justify break-words bg-black/5 overflow-y-auto ${styles.content}`}
         />
       </Show>

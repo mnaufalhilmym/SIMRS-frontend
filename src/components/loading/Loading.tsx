@@ -7,7 +7,7 @@ export default function Loading() {
         <LoadingSpinner class="w-8 h-8" />
       </div>
       <div>
-        <span class="text-xl">Loading...</span>
+        <span class="text-xl">Sedang memuat...</span>
       </div>
     </div>
   );

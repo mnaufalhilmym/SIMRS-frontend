@@ -173,6 +173,23 @@ const routes: RouteDefinition[] = [
               },
             ],
           },
+          {
+            path: getLastScreenPath(SitePath.dashboardSetting),
+            children: [
+              {
+                path: "/",
+                component: lazy(
+                  () => import("./screens/dashboard/setting/Setting")
+                ),
+              },
+              {
+                path: getLastScreenPath(SitePath.dashboardSettingEdit),
+                component: lazy(
+                  () => import("./screens/dashboard/setting/SettingEdit")
+                ),
+              },
+            ],
+          },
         ],
       },
     ],
