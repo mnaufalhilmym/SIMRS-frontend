@@ -21,6 +21,7 @@ import reqGetPatientList from "../../../api/patient/reqGetPatientList";
 import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamily";
 import Loading from "../../../components/loading/Loading";
 import toast from "solid-toast";
+import formatSalutation from "../../../utils/formatSalutation";
 
 export default function PatientDetailScreen() {
   const params = useParams<{ id: string }>();
@@ -139,7 +140,16 @@ export default function PatientDetailScreen() {
                 title="Nomor Induk Kependudukan (No. NIK)"
                 value={patient()!.populationIdentificationNumber}
               />
-              <TextItem title="Nama Lengkap Pasien" value={patient()!.name} />
+              <TextItem
+                title="Nama Lengkap Pasien"
+                value={
+                  patient()!.salutation
+                    ? `${formatSalutation(patient()!.salutation)} ${
+                        patient()!.name
+                      }`
+                    : patient()!.name
+                }
+              />
               <div class="w-full max-w-[40rem] flex gap-x-2">
                 <div class="flex-1">
                   <TextItem

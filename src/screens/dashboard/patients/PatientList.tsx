@@ -13,6 +13,7 @@ import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
 import SearchBar from "../../../components/search/SearchBar";
 import InputDropdown from "../../../components/form/InputDropdown";
 import toast from "solid-toast";
+import formatSalutation from "../../../utils/formatSalutation";
 
 export default function PatientListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -165,7 +166,9 @@ export default function PatientListScreen() {
                         )}
                         class="underline"
                       >
-                        {p.name}
+                        {p.salutation
+                          ? `${formatSalutation(p.salutation)} ${p.name}`
+                          : p.name}
                       </A>
                     </td>
                     <td class="p-2 border border-slate-700">
