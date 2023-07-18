@@ -2,6 +2,7 @@ import PatientI from "../../types/patient";
 import Api from "../api";
 
 interface QueryI {
+  searchByMedicalRecordNumber?: string;
   searchByFamilyCardNumber?: string;
   searchByDistrictId?: string;
   search?: string;

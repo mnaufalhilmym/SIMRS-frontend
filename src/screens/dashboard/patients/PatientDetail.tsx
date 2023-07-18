@@ -49,7 +49,11 @@ export default function PatientDetailScreen() {
       ]);
       const [resFamily, resDistrict] = await Promise.all([
         reqGetPatientList({
-          searchByFamilyCardNumber: resPatient.json.data.familyCardNumber,
+          searchByMedicalRecordNumber: (() => {
+            const rm = resPatient.json.data.medicalRecordNumber.split(".");
+            const familyRm = rm.slice(0, rm.length - 1);
+            return familyRm.join(".");
+          })(),
         }),
         reqGetDistrictDetail({
           id: resPatient.json.data.districtId,
