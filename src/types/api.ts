@@ -5,5 +5,13 @@ export interface ResponseI<T> {
 }
 
 export interface PaginationI {
+  count: number;
+  limit: number;
   total: number;
 }
+
+export const paginationDefault = {
+  count: 0,
+  limit: 0,
+  total: 0,
+} as PaginationI;

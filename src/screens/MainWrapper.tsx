@@ -6,7 +6,6 @@ import SitePath from "../data/path";
 import AccountAuth from "../states/accountAuth";
 import { accountAuthDefault } from "../types/auth";
 import reqAccountAuth from "../api/auth/reqAccountAuth";
-import toast from "solid-toast";
 import checkIsEqualPath from "../utils/checkIsEqualPath";
 
 export default function MainWrapper() {
@@ -26,6 +25,7 @@ export default function MainWrapper() {
             return;
           }
 
+          localStorage.setItem("token", res.json.data.token);
           AccountAuth.data = res.json.data;
           if (
             checkIsEqualPath(SitePath.root, location.pathname) ||

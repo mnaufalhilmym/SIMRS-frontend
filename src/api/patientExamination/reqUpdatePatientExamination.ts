@@ -18,13 +18,13 @@ export default async function reqUpdatePatientExamination({
     treatment,
   });
 
-  return await Api.patch<PatientExaminationI>(
-    `/api/v1/patient-examination/${id}`,
-    {
+  return await Api.patch<PatientExaminationI>({
+    input: `/api/v1/patient-examination/${id}`,
+    init: {
       body,
       headers: {
         "content-type": "application/json",
       },
-    }
-  );
+    },
+  });
 }

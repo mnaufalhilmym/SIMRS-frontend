@@ -1,4 +1,12 @@
-import { For, Show, createRenderEffect, createSignal } from "solid-js";
+import {
+  For,
+  Show,
+  createMemo,
+  createRenderEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import DistrictI from "../../../types/district";
 import SiteHead from "../../../states/siteHead";
 import reqGetDistrictList from "../../../api/district/reqGetDistrictList";
@@ -8,12 +16,25 @@ import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
 import reqCountPatient from "../../../api/patient/reqCountPatient";
 import toast from "solid-toast";
+import { PaginationI, paginationDefault } from "../../../types/api";
 
 export default function DistrictListScreen() {
+  let bottomItemElRef: HTMLDivElement | undefined;
+
   const [isLoading, setIsLoading] = createSignal(false);
   const [districts, setDistricts] = createSignal<
     (DistrictI & { patientNumber: number })[]
   >([]);
+
+  const [lastId, setLastId] = createSignal("");
+  const [pagination, setPagination] =
+    createSignal<PaginationI>(paginationDefault);
+  const isAllFetched = createMemo(() => {
+    if (!isLoading() && districts().length >= pagination().total) {
+      return true;
+    }
+    return false;
+  });
 
   createRenderEffect(() => {
     SiteHead.title = "Daftar Wilayah";
@@ -23,7 +44,9 @@ export default function DistrictListScreen() {
     try {
       setIsLoading(true);
 
-      const res = await reqGetDistrictList();
+      const res = await reqGetDistrictList({
+        lastId: lastId(),
+      });
 
       const data = await Promise.all(
         res.json.data.map(async (d) => {
@@ -37,14 +60,50 @@ export default function DistrictListScreen() {
         })
       );
 
-      setDistricts(data);
+      setDistricts((prev) => [...prev, ...data]);
+      setPagination(res.json.pagination);
     } catch (err) {
       console.error(err);
       toast.error(err as string);
     } finally {
       setIsLoading(false);
+
+      nextPageIfBottomItemElInViewport();
     }
   });
+
+  onMount(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (isAllFetched()) {
+          if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+          return;
+        }
+        nextPage();
+      }
+    });
+
+    if (bottomItemElRef) observer.observe(bottomItemElRef);
+
+    onCleanup(() => {
+      if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+    });
+  });
+
+  function nextPage() {
+    if (isLoading() || isAllFetched()) return;
+    const id = districts().at(-1)?.id;
+    if (!id) return;
+    setLastId(id);
+  }
+
+  function nextPageIfBottomItemElInViewport() {
+    const rect = bottomItemElRef?.getBoundingClientRect();
+    if (!rect) return;
+    if (rect.top <= document.documentElement.clientHeight) {
+      nextPage();
+    }
+  }
 
   return (
     <>
@@ -98,6 +157,7 @@ export default function DistrictListScreen() {
         <Show when={!isLoading() && !districts().length}>
           <NoData />
         </Show>
+        <div ref={bottomItemElRef} />
       </div>
     </>
   );

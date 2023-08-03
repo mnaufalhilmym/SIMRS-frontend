@@ -39,63 +39,80 @@ export default function HomeScreen() {
       </div>
       <div class="mt-8 px-6">
         <Show when={!isLoading()}>
-          <div>
-            <img src={setting().coverImg} class="block max-h-[36rem] mx-auto rounded-lg" />
-          </div>
-          <div class="mt-8">
-            <span class="block font-semibold text-center text-2xl">
-              {SiteInfo.institutionName}
-            </span>
-          </div>
-          <div class="mt-4">
+          <Show when={setting().coverImg}>
             <div>
+              <img
+                src={setting().coverImg}
+                class="block max-h-[36rem] mx-auto rounded-lg"
+              />
+            </div>
+            <div class="mt-8">
+              <span class="block font-semibold text-center text-2xl">
+                {SiteInfo.institutionName}
+              </span>
+            </div>
+          </Show>
+          <Show when={setting().vision}>
+            <div class="mt-4">
               <div>
-                <span class="block font-semibold text-center text-xl">Visi</span>
-              </div>
-              <div class="w-fit mx-auto mt-1">
-                <p
-                  innerHTML={DOMPurify.sanitize(
-                    marked.parse(setting().vision ?? "")
-                  )}
-                  class={`text-justify break-words ${styles.content}`}
-                />
+                <div>
+                  <span class="block font-semibold text-center text-xl">
+                    Visi
+                  </span>
+                </div>
+                <div class="w-fit mx-auto mt-1">
+                  <p
+                    innerHTML={DOMPurify.sanitize(
+                      marked.parse(setting().vision ?? "")
+                    )}
+                    class={`text-justify break-words ${styles.content}`}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div class="mt-4">
-            <div>
+          </Show>
+          <Show when={setting().mission}>
+            <div class="mt-4">
               <div>
-                <span class="block font-semibold text-center text-xl">Misi</span>
+                <div>
+                  <span class="block font-semibold text-center text-xl">
+                    Misi
+                  </span>
+                </div>
+                <div class="w-fit mx-auto mt-1">
+                  <p
+                    innerHTML={DOMPurify.sanitize(
+                      marked.parse(setting().mission ?? "")
+                    )}
+                    class={`text-justify break-words ${styles.content}`}
+                  />
+                </div>
               </div>
-              <div class="w-fit mx-auto mt-1">
-                <p
-                  innerHTML={DOMPurify.sanitize(
-                    marked.parse(setting().mission ?? "")
+            </div>
+          </Show>
+          <Show when={setting().workers}>
+            <div class="mt-4">
+              <div>
+                <span class="block font-semibold text-center text-xl">
+                  Pegawai
+                </span>
+              </div>
+              <div class="max-w-[40rem] mx-auto mt-1">
+                <For each={setting().workers}>
+                  {(w) => (
+                    <div class="flex gap-x-2">
+                      <div class="flex-1">
+                        <span>{w.name}</span>
+                      </div>
+                      <div class="flex-1">
+                        <span>{w.position}</span>
+                      </div>
+                    </div>
                   )}
-                  class={`text-justify break-words ${styles.content}`}
-                />
+                </For>
               </div>
             </div>
-          </div>
-          <div class="mt-4">
-            <div>
-              <span class="block font-semibold text-center text-xl">Pegawai</span>
-            </div>
-            <div class="max-w-[40rem] mx-auto mt-1">
-              <For each={setting().workers}>
-                {(w) => (
-                  <div class="flex gap-x-2">
-                    <div class="flex-1">
-                      <span>{w.name}</span>
-                    </div>
-                    <div class="flex-1">
-                      <span>{w.position}</span>
-                    </div>
-                  </div>
-                )}
-              </For>
-            </div>
-          </div>
+          </Show>
         </Show>
         <Show when={isLoading()}>
           <Loading />

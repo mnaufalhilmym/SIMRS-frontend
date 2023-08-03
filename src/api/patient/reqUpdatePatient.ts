@@ -64,10 +64,13 @@ export default async function reqUpdatePatient({
     phone,
   });
 
-  return await Api.patch<PatientI>(`/api/v1/patient/${id}`, {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.patch<PatientI>({
+    input: `/api/v1/patient/${id}`,
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

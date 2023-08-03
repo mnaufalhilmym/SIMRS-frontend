@@ -14,10 +14,13 @@ export default async function reqUpdateSetting({
 }) {
   const body = JSON.stringify({ coverImg, workers, vision, mission });
 
-  return Api.put("/api/v1/setting", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return Api.put({
+    input: "/api/v1/setting",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

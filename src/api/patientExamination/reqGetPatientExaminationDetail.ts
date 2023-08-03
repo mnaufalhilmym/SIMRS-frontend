@@ -6,7 +6,7 @@ export default async function reqGetPatientExaminationDetail({
 }: {
   id: string;
 }) {
-  return await Api.get<PatientExaminationI>(
-    `/api/v1/patient-examination/${id}`
-  );
+  return await Api.get<PatientExaminationI>({
+    input: `/api/v1/patient-examination/${id}`,
+  });
 }

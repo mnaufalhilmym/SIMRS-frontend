@@ -19,10 +19,13 @@ export default async function reqAddPatientExamination({
     treatment,
   });
 
-  return await Api.post<PatientExaminationI>("/api/v1/patient-examination", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.post<PatientExaminationI>({
+    input: "/api/v1/patient-examination",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

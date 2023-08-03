@@ -7,15 +7,13 @@ export interface SignInI {
 }
 
 export interface AccountAuthI {
+  token: string;
   name: string;
   role: string;
 }
 
 export const accountAuthDefault = {
+  token: "",
   name: "",
   role: AccountRoleE.Unknown,
 } as AccountAuthI;
-
-export interface RenewTokenI {
-  token: string;
-}

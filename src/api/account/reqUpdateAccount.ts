@@ -21,10 +21,13 @@ export default async function reqUpdateAccount({
     role,
   });
 
-  return await Api.patch<AccountI>(`/api/v1/account/${id}`, {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.patch<AccountI>({
+    input: `/api/v1/account/${id}`,
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

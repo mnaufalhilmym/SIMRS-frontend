@@ -5,9 +5,12 @@ export default async function reqAccountAuth() {
   const token = localStorage.getItem("token");
   if (!token) return;
 
-  return await Api.get<AccountAuthI>("/api/v1/auth/account", {
-    headers: {
-      authorization: `bearer ${token}`,
+  return await Api.get<AccountAuthI>({
+    input: "/api/v1/auth/account",
+    init: {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
     },
   });
 }

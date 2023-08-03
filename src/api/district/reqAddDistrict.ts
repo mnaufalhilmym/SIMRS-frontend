@@ -6,10 +6,13 @@ export default async function reqAddDistrict({ name }: { name: string }) {
     name,
   });
 
-  return await Api.post<DistrictI>("/api/v1/district", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.post<DistrictI>({
+    input: "/api/v1/district",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

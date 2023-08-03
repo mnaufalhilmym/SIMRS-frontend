@@ -128,7 +128,7 @@ function TextItem(props: TextItemProps) {
       </div>
       <div class="mt-1 w-full max-w-[40rem]">
         <div class="w-full py-2 px-4 bg-black/5 border border-black/30 rounded-lg">
-          <span>{props.value}</span>
+          <span class="block h-6">{props.value}</span>
         </div>
       </div>
     </div>

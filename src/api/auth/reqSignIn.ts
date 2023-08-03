@@ -10,10 +10,13 @@ export default async function reqSignIn({
 }) {
   const body = JSON.stringify({ username, password });
 
-  return await Api.post<SignInI>("/api/v1/auth/signin", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.post<SignInI>({
+    input: "/api/v1/auth/signin",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

@@ -19,10 +19,13 @@ export default async function reqAddAccount({
     role,
   });
 
-  return await Api.post<AccountI>("/api/v1/account", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.post<AccountI>({
+    input: "/api/v1/account",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

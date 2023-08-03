@@ -62,10 +62,13 @@ export default async function reqAddPatient({
     phone,
   });
 
-  return await Api.post<PatientI>("/api/v1/patient", {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.post<PatientI>({
+    input: "/api/v1/patient",
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

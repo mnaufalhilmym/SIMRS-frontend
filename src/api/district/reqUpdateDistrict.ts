@@ -12,10 +12,13 @@ export default async function reqUpdateDistrict({
     name,
   });
 
-  return await Api.patch<DistrictI>(`/api/v1/district/${id}`, {
-    body,
-    headers: {
-      "content-type": "application/json",
+  return await Api.patch<DistrictI>({
+    input: `/api/v1/district/${id}`,
+    init: {
+      body,
+      headers: {
+        "content-type": "application/json",
+      },
     },
   });
 }

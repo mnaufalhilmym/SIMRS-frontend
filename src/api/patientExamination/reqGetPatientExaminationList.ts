@@ -6,19 +6,8 @@ interface QueryI {
 }
 
 export default async function reqGetPatientExaminationList(query?: QueryI) {
-  let queryStr = "";
-  if (query) {
-    for (const [k, v] of Object.entries(query)) {
-      if (!queryStr.length) {
-        queryStr += "?";
-      } else {
-        queryStr += "&";
-      }
-      queryStr += `${k}=${v}`;
-    }
-  }
-
-  return await Api.get<PatientExaminationI[]>(
-    `/api/v1/patient-examinations${queryStr}`
-  );
+  return await Api.get<PatientExaminationI[]>({
+    input: "/api/v1/patient-examinations",
+    query,
+  });
 }

@@ -1,6 +1,14 @@
 import { A, useSearchParams } from "@solidjs/router";
 import SitePath from "../../../data/path";
-import { For, Show, createRenderEffect, createSignal } from "solid-js";
+import {
+  For,
+  Show,
+  createMemo,
+  createRenderEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import PatientI from "../../../types/patient";
 import SiteHead from "../../../states/siteHead";
 import reqGetPatientList from "../../../api/patient/reqGetPatientList";
@@ -14,17 +22,35 @@ import SearchBar from "../../../components/search/SearchBar";
 import InputDropdown from "../../../components/form/InputDropdown";
 import toast from "solid-toast";
 import formatSalutation from "../../../utils/formatSalutation";
+import { PaginationI, paginationDefault } from "../../../types/api";
+
+interface FetchQueryI {
+  search?: string;
+  searchByDistrictId?: string;
+  lastId?: string;
+}
 
 export default function PatientListScreen() {
-  const [isLoading, setIsLoading] = createSignal(false);
-  const [patients, setPatients] = createSignal<PatientI[]>([]);
-  const [districts, setDistricts] = createSignal<DistrictI[]>([]);
-  const [filterByDistrict, setFilterByDistrict] = createSignal<DistrictI>();
+  let bottomItemElRef: HTMLDivElement | undefined;
 
   const [searchParams, setSearchParams] = useSearchParams<{
     search?: string;
     searchByDistrictId?: string;
   }>();
+
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [patients, setPatients] = createSignal<PatientI[]>([]);
+  const [districts, setDistricts] = createSignal<DistrictI[]>([]);
+  const [fetchQuery, setFetchQuery] = createSignal<FetchQueryI>();
+
+  const [pagination, setPagination] =
+    createSignal<PaginationI>(paginationDefault);
+  const isAllFetched = createMemo(() => {
+    if (!isLoading() && patients().length >= pagination().total) {
+      return true;
+    }
+    return false;
+  });
 
   createRenderEffect(() => {
     SiteHead.title = "Daftar Pasien";
@@ -34,17 +60,17 @@ export default function PatientListScreen() {
     try {
       setIsLoading(true);
 
-      const res = await reqGetPatientList({
-        search: searchParams.search,
-        searchByDistrictId: searchParams.searchByDistrictId,
-      });
+      const res = await reqGetPatientList(fetchQuery());
 
-      setPatients(res.json.data);
+      setPatients((data) => [...data, ...res.json.data]);
+      setPagination(res.json.pagination);
     } catch (err) {
       console.error(err);
       toast.error(err as string);
     } finally {
       setIsLoading(false);
+
+      nextPageIfBottomItemElInViewport();
     }
   });
 
@@ -58,23 +84,69 @@ export default function PatientListScreen() {
     }
   });
 
+  createRenderEffect(() => {
+    setFetchQuery({
+      search: searchParams.search,
+      searchByDistrictId: searchParams.searchByDistrictId,
+      lastId: undefined,
+    });
+  });
+
+  onMount(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (isAllFetched()) {
+          if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+          return;
+        }
+        nextPage();
+      }
+    });
+
+    if (bottomItemElRef) observer.observe(bottomItemElRef);
+
+    onCleanup(() => {
+      if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+    });
+  });
+
+  function nextPage() {
+    if (isLoading() || isAllFetched()) return;
+    const id = patients().at(-1)?.id;
+    if (!id) return;
+    setFetchQuery({
+      search: searchParams.search,
+      searchByDistrictId: searchParams.searchByDistrictId,
+      lastId: id,
+    });
+  }
+
+  function nextPageIfBottomItemElInViewport() {
+    const rect = bottomItemElRef?.getBoundingClientRect();
+    if (!rect) return;
+    if (rect.top <= document.documentElement.clientHeight) {
+      nextPage();
+    }
+  }
+
   function setSearchValue(search?: string) {
     setPatients([]);
+
     setSearchParams({
       search,
       searchByDistrictId: searchParams.searchByDistrictId,
     });
   }
 
-  function setSearchByDistrictIdValue(district: DistrictI) {
-    if (filterByDistrict() === district) return;
+  function setSearchByDistrictIdValue(districtId: string) {
+    if (fetchQuery()?.searchByDistrictId === districtId) return;
 
     setPatients([]);
+
     setSearchParams({
       search: searchParams.search,
-      searchByDistrictId: district.id,
+      searchByDistrictId: districtId,
     });
-    setFilterByDistrict(district);
   }
 
   return (
@@ -103,18 +175,16 @@ export default function PatientListScreen() {
           <FilterByDistrict
             placeholder="Filter wilayah"
             value={
-              filterByDistrict()
+              fetchQuery()?.searchByDistrictId
                 ? {
-                    title: filterByDistrict()!.name,
-                    value: filterByDistrict()!.id,
+                    title: districts().find(
+                      (d) => d.id === fetchQuery()?.searchByDistrictId
+                    )?.name!,
+                    value: fetchQuery()?.searchByDistrictId!,
                   }
                 : undefined
             }
-            onChangeValue={(id) =>
-              setSearchByDistrictIdValue(
-                districts().find((d) => d.id === id) ?? districtDefault
-              )
-            }
+            onChangeValue={(id) => setSearchByDistrictIdValue(id)}
             options={[
               { title: "-", value: "" },
               ...districts().map((d) => ({ title: d.name, value: d.id })),
@@ -195,6 +265,7 @@ export default function PatientListScreen() {
         <Show when={!isLoading() && !patients().length}>
           <NoData />
         </Show>
+        <div ref={bottomItemElRef} />
       </div>
     </>
   );

@@ -5,5 +5,5 @@ export default async function reqDeletePatientExamination({
 }: {
   id: string;
 }) {
-  return await Api.delete(`/api/v1/patient-examination/${id}`);
+  return await Api.delete({ input: `/api/v1/patient-examination/${id}` });
 }

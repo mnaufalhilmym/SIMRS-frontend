@@ -1,6 +1,14 @@
 import { A } from "@solidjs/router";
 import SitePath from "../../../data/path";
-import { For, Show, createRenderEffect, createSignal } from "solid-js";
+import {
+  For,
+  Show,
+  createMemo,
+  createRenderEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import AccountI from "../../../types/account";
 import SiteHead from "../../../states/siteHead";
 import reqGetAccountList from "../../../api/account/reqGetAccountList";
@@ -9,10 +17,23 @@ import formatAccountRole from "../../../utils/formatAccountRole";
 import Loading from "../../../components/loading/Loading";
 import NoData from "../../../components/nodata/NoData";
 import toast from "solid-toast";
+import { PaginationI, paginationDefault } from "../../../types/api";
 
 export default function AccountListScreen() {
+  let bottomItemElRef: HTMLDivElement | undefined;
+
   const [isLoading, setIsLoading] = createSignal(false);
   const [accounts, setAccounts] = createSignal<AccountI[]>([]);
+
+  const [lastId, setLastId] = createSignal("");
+  const [pagination, setPagination] =
+    createSignal<PaginationI>(paginationDefault);
+  const isAllFetched = createMemo(() => {
+    if (!isLoading() && accounts().length >= pagination().total) {
+      return true;
+    }
+    return false;
+  });
 
   createRenderEffect(() => {
     SiteHead.title = "Daftar Akun";
@@ -22,16 +43,54 @@ export default function AccountListScreen() {
     try {
       setIsLoading(true);
 
-      const res = await reqGetAccountList();
+      const res = await reqGetAccountList({
+        lastId: lastId(),
+      });
 
-      setAccounts(res.json.data);
+      setAccounts((data) => [...data, ...res.json.data]);
+      setPagination(res.json.pagination);
     } catch (err) {
       console.error(err);
       toast.error(err as string);
     } finally {
       setIsLoading(false);
+
+      nextPageIfBottomItemElInViewport();
     }
   });
+
+  onMount(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (isAllFetched()) {
+          if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+          return;
+        }
+        nextPage();
+      }
+    });
+
+    if (bottomItemElRef) observer.observe(bottomItemElRef);
+
+    onCleanup(() => {
+      if (bottomItemElRef) observer.unobserve(bottomItemElRef);
+    });
+  });
+
+  function nextPage() {
+    if (isLoading() || isAllFetched()) return;
+    const id = accounts().at(-1)?.id;
+    if (!id) return;
+    setLastId(id);
+  }
+
+  function nextPageIfBottomItemElInViewport() {
+    const rect = bottomItemElRef?.getBoundingClientRect();
+    if (!rect) return;
+    if (rect.top <= document.documentElement.clientHeight) {
+      nextPage();
+    }
+  }
 
   return (
     <>
@@ -95,6 +154,7 @@ export default function AccountListScreen() {
         <Show when={!isLoading() && !accounts().length}>
           <NoData />
         </Show>
+        <div ref={bottomItemElRef} />
       </div>
     </>
   );

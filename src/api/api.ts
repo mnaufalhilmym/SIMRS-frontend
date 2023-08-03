@@ -23,38 +23,81 @@ export default class Api {
     return { status: res.status, json };
   }
 
-  static async get<T>(
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-  ): Promise<{ status: number; json: ResponseI<T> }> {
-    return this.fetch<T>(input, { ...init, method: "GET" });
+  private static parseQuery(query?: Object) {
+    let queryStr = "";
+    if (query) {
+      for (const [k, v] of Object.entries(query)) {
+        if (!v) continue;
+        if (!queryStr.length) queryStr += "?";
+        else queryStr += "&";
+        queryStr += `${k}=${v}`;
+      }
+    }
+    return queryStr;
   }
 
-  static async post<T>(
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-  ): Promise<{ status: number; json: ResponseI<T> }> {
-    return this.fetch<T>(input, { ...init, method: "POST" });
+  static async get<T>({
+    input,
+    init,
+    query,
+  }: {
+    input: RequestInfo | URL;
+    init?: RequestInit | undefined;
+    query?: Object;
+  }): Promise<{ status: number; json: ResponseI<T> }> {
+    const queryStr = this.parseQuery(query);
+    return this.fetch<T>(`${input}${queryStr}`, { ...init, method: "GET" });
   }
 
-  static async put<T>(
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-  ): Promise<{ status: number; json: ResponseI<T> }> {
-    return this.fetch<T>(input, { ...init, method: "PUT" });
+  static async post<T>({
+    input,
+    init,
+    query,
+  }: {
+    input: RequestInfo | URL;
+    init?: RequestInit | undefined;
+    query?: Object;
+  }): Promise<{ status: number; json: ResponseI<T> }> {
+    const queryStr = this.parseQuery(query);
+    return this.fetch<T>(`${input}${queryStr}`, { ...init, method: "POST" });
   }
 
-  static async patch<T>(
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-  ): Promise<{ status: number; json: ResponseI<T> }> {
-    return this.fetch<T>(input, { ...init, method: "PATCH" });
+  static async put<T>({
+    input,
+    init,
+    query,
+  }: {
+    input: RequestInfo | URL;
+    init?: RequestInit | undefined;
+    query?: Object;
+  }): Promise<{ status: number; json: ResponseI<T> }> {
+    const queryStr = this.parseQuery(query);
+    return this.fetch<T>(`${input}${queryStr}`, { ...init, method: "PUT" });
   }
 
-  static async delete<T>(
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-  ): Promise<{ status: number; json: ResponseI<T> }> {
-    return this.fetch<T>(input, { ...init, method: "DELETE" });
+  static async patch<T>({
+    input,
+    init,
+    query,
+  }: {
+    input: RequestInfo | URL;
+    init?: RequestInit | undefined;
+    query?: Object;
+  }): Promise<{ status: number; json: ResponseI<T> }> {
+    const queryStr = this.parseQuery(query);
+    return this.fetch<T>(`${input}${queryStr}`, { ...init, method: "PATCH" });
+  }
+
+  static async delete<T>({
+    input,
+    init,
+    query,
+  }: {
+    input: RequestInfo | URL;
+    init?: RequestInit | undefined;
+    query?: Object;
+  }): Promise<{ status: number; json: ResponseI<T> }> {
+    const queryStr = this.parseQuery(query);
+    return this.fetch<T>(`${input}${queryStr}`, { ...init, method: "DELETE" });
   }
 }
