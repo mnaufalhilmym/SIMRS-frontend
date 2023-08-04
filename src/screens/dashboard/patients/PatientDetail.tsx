@@ -182,9 +182,7 @@ export default function PatientDetailScreen() {
     try {
       await reqDeletePatientExamination({ id });
 
-      const res = await reqGetPatientExaminationList({ patientId: params.id });
-
-      setPatientExaminations(res.json.data);
+      setPatientExaminations((prev) => [...prev.filter((p) => p.id !== id)]);
     } catch (err) {
       console.error(err);
       toast.error(err as string);
@@ -353,9 +351,7 @@ export default function PatientDetailScreen() {
         </A>
       </div>
       <div class="mt-8 px-6">
-        <Show
-          when={patientExaminations().length}
-        >
+        <Show when={patientExaminations().length}>
           <table class="w-full table-auto border-collapse border border-slate-500 text-sm">
             <thead>
               <tr>
