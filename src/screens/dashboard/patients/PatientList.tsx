@@ -41,8 +41,8 @@ export default function PatientListScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
   const [patients, setPatients] = createSignal<PatientI[]>([]);
   const [districts, setDistricts] = createSignal<DistrictI[]>([]);
-  const [fetchQuery, setFetchQuery] = createSignal<FetchQueryI>();
 
+  const [fetchQuery, setFetchQuery] = createSignal<FetchQueryI>();
   const [pagination, setPagination] =
     createSignal<PaginationI>(paginationDefault);
   const isAllFetched = createMemo(() => {

@@ -1,5 +1,13 @@
 import { A, useNavigate, useParams } from "@solidjs/router";
-import { For, Show, createRenderEffect, createSignal } from "solid-js";
+import {
+  For,
+  Show,
+  createMemo,
+  createRenderEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import PatientI from "../../../types/patient";
 import SiteHead from "../../../states/siteHead";
 import reqGetPatientDetail from "../../../api/patient/reqGetPatientDetail";
@@ -22,18 +30,37 @@ import formatRelationshipInFamily from "../../../utils/formatRelationshipInFamil
 import Loading from "../../../components/loading/Loading";
 import toast from "solid-toast";
 import formatSalutation from "../../../utils/formatSalutation";
+import { PaginationI, paginationDefault } from "../../../types/api";
 
 export default function PatientDetailScreen() {
+  let bottomItemPatientExaminationsElRef: HTMLDivElement | undefined;
+
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = createSignal(false);
+  const [isLoadingPatientExaminations, setIsLoadingPatientExaminations] =
+    createSignal(false);
   const [patient, setPatient] = createSignal<PatientI>();
   const [family, setFamily] = createSignal<PatientI[]>([]);
   const [patientExaminations, setPatientExaminations] = createSignal<
     PatientExaminationI[]
   >([]);
   const [district, setDistrict] = createSignal<DistrictI>(districtDefault);
+
+  const [lastPatientExaminationsId, setLastPatientExaminationsId] =
+    createSignal<string>();
+  const [paginationPatientExaminations, setPaginationPatientExaminations] =
+    createSignal<PaginationI>(paginationDefault);
+  const isAllPatientExaminationsFetched = createMemo(() => {
+    if (
+      !isLoading() &&
+      patientExaminations().length >= paginationPatientExaminations().total
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   createRenderEffect(() => {
     SiteHead.title = "Detail Pasien";
@@ -43,10 +70,7 @@ export default function PatientDetailScreen() {
     try {
       setIsLoading(true);
 
-      const [resPatient, resPatientExamination] = await Promise.all([
-        reqGetPatientDetail({ id: params.id }),
-        reqGetPatientExaminationList({ patientId: params.id }),
-      ]);
+      const resPatient = await reqGetPatientDetail({ id: params.id });
       const [resFamily, resDistrict] = await Promise.all([
         reqGetPatientList({
           searchByMedicalRecordNumber: (() => {
@@ -54,6 +78,7 @@ export default function PatientDetailScreen() {
             const familyRm = rm.slice(0, rm.length - 1);
             return familyRm.join(".");
           })(),
+          limit: 100,
         }),
         reqGetDistrictDetail({
           id: resPatient.json.data.districtId,
@@ -65,7 +90,6 @@ export default function PatientDetailScreen() {
       }
 
       setPatient(resPatient.json.data);
-      setPatientExaminations(resPatientExamination.json.data);
       setFamily(resFamily.json.data);
       setDistrict(resDistrict.json.data);
     } catch (err) {
@@ -76,6 +100,64 @@ export default function PatientDetailScreen() {
       setIsLoading(false);
     }
   });
+
+  createRenderEffect(async () => {
+    try {
+      setIsLoadingPatientExaminations(true);
+
+      const res = await reqGetPatientExaminationList({
+        patientId: params.id,
+        lastId: lastPatientExaminationsId(),
+      });
+
+      setPatientExaminations((data) => [...data, ...res.json.data]);
+      setPaginationPatientExaminations(res.json.pagination);
+    } catch (err) {
+      console.error(err);
+      toast.error(err as string);
+    } finally {
+      setIsLoadingPatientExaminations(false);
+
+      nextPageIfBottomItemPatientExaminationsElInViewport();
+    }
+  });
+
+  onMount(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (isAllPatientExaminationsFetched()) {
+          if (bottomItemPatientExaminationsElRef)
+            observer.unobserve(bottomItemPatientExaminationsElRef);
+          return;
+        }
+        nextPageIfBottomItemPatientExaminationsElInViewport();
+      }
+    });
+
+    if (bottomItemPatientExaminationsElRef)
+      observer.observe(bottomItemPatientExaminationsElRef);
+
+    onCleanup(() => {
+      if (bottomItemPatientExaminationsElRef)
+        observer.unobserve(bottomItemPatientExaminationsElRef);
+    });
+  });
+
+  function nextPagePatientExaminations() {
+    if (isLoadingPatientExaminations() || isAllPatientExaminationsFetched())
+      return;
+    const id = patientExaminations().at(-1)?.id;
+    if (!id) return;
+    setLastPatientExaminationsId(id);
+  }
+
+  function nextPageIfBottomItemPatientExaminationsElInViewport() {
+    const rect = bottomItemPatientExaminationsElRef?.getBoundingClientRect();
+    if (!rect) return;
+    if (rect.top <= document.documentElement.clientHeight) {
+      nextPagePatientExaminations();
+    }
+  }
 
   function navigateBack() {
     navigate(SitePath.dashboardPatientList, { replace: true });
@@ -271,7 +353,9 @@ export default function PatientDetailScreen() {
         </A>
       </div>
       <div class="mt-8 px-6">
-        <Show when={patientExaminations().length && !isLoading()}>
+        <Show
+          when={patientExaminations().length}
+        >
           <table class="w-full table-auto border-collapse border border-slate-500 text-sm">
             <thead>
               <tr>
@@ -329,12 +413,17 @@ export default function PatientDetailScreen() {
             </tbody>
           </table>
         </Show>
-        <Show when={isLoading()}>
+        <Show when={isLoadingPatientExaminations()}>
           <Loading />
         </Show>
-        <Show when={!isLoading() && !patientExaminations().length}>
+        <Show
+          when={
+            !isLoadingPatientExaminations() && !patientExaminations().length
+          }
+        >
           <NoData />
         </Show>
+        <div ref={bottomItemPatientExaminationsElRef} />
       </div>
     </>
   );
