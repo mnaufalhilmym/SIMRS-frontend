@@ -9,6 +9,7 @@ import DOMPurify from "dompurify";
 import { marked } from "marked";
 import styles from "../../../styles/markdown.module.css";
 import Loading from "../../../components/loading/Loading";
+import NoData from "../../../components/nodata/NoData";
 
 export default function SettingScreen() {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -54,7 +55,9 @@ export default function SettingScreen() {
                 <span>Gambar Sampul</span>
               </div>
               <div class="mt-1 w-full max-w-[40rem]">
-                <img src={setting().coverImg} class="rounded-lg" />
+                <Show when={setting().coverImg} fallback={<NoData />}>
+                  <img src={setting().coverImg} class="rounded-lg" />
+                </Show>
               </div>
             </div>
             <div>
@@ -67,7 +70,7 @@ export default function SettingScreen() {
                     innerHTML={DOMPurify.sanitize(
                       marked.parse(setting().vision ?? "")
                     )}
-                    class={`text-justify break-words ${styles.content}`}
+                    class={`min-h-[1.5rem] text-justify break-words ${styles.content}`}
                   />
                 </div>
               </div>
@@ -82,7 +85,7 @@ export default function SettingScreen() {
                     innerHTML={DOMPurify.sanitize(
                       marked.parse(setting().mission ?? "")
                     )}
-                    class={`text-justify break-words ${styles.content}`}
+                    class={`min-h-[1.5rem] text-justify break-words ${styles.content}`}
                   />
                 </div>
               </div>

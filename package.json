@@ -7,7 +7,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build && mkdir -p ./dist/src/assets && cp -r ./src/assets ./dist/src/",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "serve-prod": "vite preview --host"
   },
   "license": "MIT",
   "devDependencies": {
